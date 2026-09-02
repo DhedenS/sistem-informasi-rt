@@ -21,13 +21,5 @@ class DatabaseSeeder extends Seeder
             HouseholdSeeder::class,
             TransactionCategorySeeder::class,
         ]);
-
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => bcrypt('password'),
-            ]
-        );
     }
 }
