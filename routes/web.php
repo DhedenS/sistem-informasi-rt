@@ -1,9 +1,11 @@
 <?php
+
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlockController;
 use App\Http\Controllers\HouseholdController;
 use App\Http\Controllers\TransactionCategoryController;
+use App\Http\Controllers\SuratMasukController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,6 +19,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Administrasi Surat - Surat Masuk
+    Route::resource('surat-masuk', SuratMasukController::class);
 });
 
 // Cuma Superadmin yang boleh kelola blok & kategori transaksi
