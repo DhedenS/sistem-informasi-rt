@@ -110,23 +110,59 @@
             </p>
 
 
-            <a href="#"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800">
-
-                <span>💰</span>
-                <span class="text-sm">Transaksi</span>
-
-            </a>
-
-
             @role('Superadmin')
 
+                <!-- Transaksi Kas -->
+                <a href="{{ route('cashflow.transactions.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1
+                   {{ request()->routeIs('cashflow.transactions.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800' }}">
+
+                    <span>💰</span>
+                    <span class="text-sm">Transaksi Kas</span>
+
+                </a>
+
+
+                <!-- Iuran KK -->
+                <a href="{{ route('cashflow.dues.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1
+                   {{ request()->routeIs('cashflow.dues.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800' }}">
+
+                    <span>💳</span>
+                    <span class="text-sm">Iuran KK</span>
+
+                </a>
+
+
+                <!-- Sumber Dana -->
+                <a href="{{ route('fund-sources.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1
+                   {{ request()->routeIs('fund-sources.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800' }}">
+
+                    <span>🏦</span>
+                    <span class="text-sm">Sumber Dana</span>
+
+                </a>
+
+
+                <!-- Kategori Transaksi -->
                 <a href="{{ route('transaction-categories.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg mt-1
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1
                    {{ request()->routeIs('transaction-categories.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800' }}">
 
                     <span>🏷️</span>
                     <span class="text-sm">Kategori Transaksi</span>
+
+                </a>
+
+
+                <!-- Laporan Keuangan -->
+                <a href="{{ route('cashflow.reports.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1
+                   {{ request()->routeIs('cashflow.reports.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800' }}">
+
+                    <span>📊</span>
+                    <span class="text-sm">Laporan Keuangan</span>
 
                 </a>
 

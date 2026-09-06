@@ -12,4 +12,14 @@ class Household extends Model
     {
         return $this->belongsTo(Block::class);
     }
+
+    public function dues()
+    {
+        return $this->hasMany(Due::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
