@@ -16,13 +16,18 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, HasRoles, Notifiable;
 
     /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
      */
+    public function household()
+    {
+        return $this->belongsTo(Household::class);
+    }
+
     protected function casts(): array
     {
         return [

@@ -24,18 +24,23 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Administrasi Surat - Surat Masuk
+    // Administrasi Surat - Surat Masuk (modul surat di-skip dulu sesuai dokumen terbaru,
+    // route dibiarkan ada tapi belum dipakai/didemokan)
     Route::resource('surat-masuk', SuratMasukController::class);
 });
 
-// Cuma Superadmin yang boleh kelola blok & kategori transaksi
-Route::middleware(['auth', 'role:Superadmin'])->group(function () {
+// Ketua RT: mengawasi sistem & data RT secara keseluruhan -> kelola blok & master data
+Route::middleware(['auth', 'role:Ketua RT'])->group(function () {
 
     Route::resource('blocks', BlockController::class);
 
     Route::resource('transaction-categories', TransactionCategoryController::class);
 
     Route::resource('fund-sources', FundSourceController::class);
+});
+
+// Bendahara: kelola & periksa data keuangan, approve/reject pembayaran
+Route::middleware(['auth', 'role:Bendahara'])->group(function () {
 
     Route::prefix('cashflow')->name('cashflow.')->group(function () {
 
@@ -87,8 +92,8 @@ Route::middleware(['auth', 'role:Superadmin'])->group(function () {
     });
 });
 
-// Superadmin & Bendahara yang boleh kelola data KK
-Route::middleware(['auth', 'role:Superadmin|Bendahara'])->group(function () {
+// Ketua RT & Bendahara yang boleh kelola data KK
+Route::middleware(['auth', 'role:Ketua RT|Bendahara'])->group(function () {
     Route::resource('households', HouseholdController::class);
 });
 
