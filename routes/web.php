@@ -10,39 +10,118 @@ use App\Http\Controllers\FundSourceController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\DueController;
 use App\Http\Controllers\CashflowReportController;
+use App\Http\Controllers\PengajuanIuranController;
+use App\Http\Controllers\VerifikasiIuranController;
+
+
+/*
+|--------------------------------------------------------------------------
+| Halaman Utama
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Administrasi Surat - Surat Masuk (modul surat di-skip dulu sesuai dokumen terbaru,
-    // route dibiarkan ada tapi belum dipakai/didemokan)
-    Route::resource('surat-masuk', SuratMasukController::class);
+/*
+|--------------------------------------------------------------------------
+| Profile
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
+
 });
 
-// Ketua RT: mengawasi sistem & data RT secara keseluruhan -> kelola blok & master data
-Route::middleware(['auth', 'role:Ketua RT'])->group(function () {
+
+/*
+|--------------------------------------------------------------------------
+| Administrasi Surat
+|--------------------------------------------------------------------------
+| Superadmin & Sekretaris
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:Superadmin|Sekretaris'])->group(function () {
+
+    Route::resource('surat-masuk', SuratMasukController::class);
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Master Data
+|--------------------------------------------------------------------------
+| Superadmin & Ketua RT
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:Superadmin|Ketua RT'])->group(function () {
 
     Route::resource('blocks', BlockController::class);
 
     Route::resource('transaction-categories', TransactionCategoryController::class);
 
     Route::resource('fund-sources', FundSourceController::class);
+
 });
 
-// Bendahara: kelola & periksa data keuangan, approve/reject pembayaran
+
+/*
+|--------------------------------------------------------------------------
+| Data KK
+|--------------------------------------------------------------------------
+| Superadmin, Ketua RT & Bendahara
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:Superadmin|Ketua RT|Bendahara'])->group(function () {
+
+    Route::resource('households', HouseholdController::class);
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Keuangan
+|--------------------------------------------------------------------------
+| Bendahara
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware(['auth', 'role:Bendahara'])->group(function () {
 
     Route::prefix('cashflow')->name('cashflow.')->group(function () {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Transaksi Pemasukan
+        |--------------------------------------------------------------------------
+        */
 
         Route::get(
             'transactions/create-income',
@@ -54,6 +133,13 @@ Route::middleware(['auth', 'role:Bendahara'])->group(function () {
             [TransactionController::class, 'storeIncome']
         )->name('transactions.store-income');
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Transaksi Pengeluaran
+        |--------------------------------------------------------------------------
+        */
+
         Route::get(
             'transactions/create-expense',
             [TransactionController::class, 'createExpense']
@@ -64,16 +150,46 @@ Route::middleware(['auth', 'role:Bendahara'])->group(function () {
             [TransactionController::class, 'storeExpense']
         )->name('transactions.store-expense');
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Data Transaksi
+        |--------------------------------------------------------------------------
+        */
+
         Route::resource('transactions', TransactionController::class)
-            ->except(['create', 'store', 'edit', 'update']);
+            ->except([
+                'create',
+                'store',
+                'edit',
+                'update'
+            ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Iuran KK
+        |--------------------------------------------------------------------------
+        */
 
         Route::resource('dues', DueController::class)
-            ->only(['index', 'create', 'store']);
+            ->only([
+                'index',
+                'create',
+                'store'
+            ]);
 
         Route::post(
             'dues/{due}/pay',
             [DueController::class, 'pay']
         )->name('dues.pay');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Laporan Keuangan
+        |--------------------------------------------------------------------------
+        */
 
         Route::get(
             'reports',
@@ -89,12 +205,97 @@ Route::middleware(['auth', 'role:Bendahara'])->group(function () {
             'reports/excel',
             [CashflowReportController::class, 'exportExcel']
         )->name('reports.excel');
+
     });
+
 });
 
-// Ketua RT & Bendahara yang boleh kelola data KK
-Route::middleware(['auth', 'role:Ketua RT|Bendahara'])->group(function () {
-    Route::resource('households', HouseholdController::class);
+
+/*
+|--------------------------------------------------------------------------
+| Pengajuan Iuran
+|--------------------------------------------------------------------------
+| Ketua Block
+|--------------------------------------------------------------------------
+|
+| Ketua Block hanya dapat:
+| - Melihat pengajuan milik bloknya
+| - Membuat pengajuan iuran
+| - Memilih KK yang sudah membayar
+| - Melihat detail pengajuan
+|
+*/
+
+Route::middleware(['auth', 'role:Ketua Block'])->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Daftar Pengajuan Iuran
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/pengajuan-iuran',
+        [PengajuanIuranController::class, 'index']
+    )->name('pengajuan-iuran.index');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Form Pengajuan Iuran
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/pengajuan-iuran/create',
+        [PengajuanIuranController::class, 'create']
+    )->name('pengajuan-iuran.create');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Simpan Pengajuan Iuran
+    |--------------------------------------------------------------------------
+    */
+
+    Route::post(
+        '/pengajuan-iuran',
+        [PengajuanIuranController::class, 'store']
+    )->name('pengajuan-iuran.store');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Detail Pengajuan Iuran
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/pengajuan-iuran/{pengajuanIuran}',
+        [PengajuanIuranController::class, 'show']
+    )->name('pengajuan-iuran.show');
+
 });
+
+Route::middleware(['auth', 'role:Bendahara'])->group(function () {
+    Route::get('/verifikasi-iuran', [VerifikasiIuranController::class, 'index'])
+        ->name('verifikasi-iuran.index');
+
+    Route::get('/verifikasi-iuran/{pengajuanIuran}', [VerifikasiIuranController::class, 'show'])
+        ->name('verifikasi-iuran.show');
+
+    Route::post('/verifikasi-iuran/{pengajuanIuran}/approve', [VerifikasiIuranController::class, 'approve'])
+        ->name('verifikasi-iuran.approve');
+
+    Route::post('/verifikasi-iuran/{pengajuanIuran}/reject', [VerifikasiIuranController::class, 'reject'])
+        ->name('verifikasi-iuran.reject');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Authentication
+|--------------------------------------------------------------------------
+*/
 
 require __DIR__ . '/auth.php';

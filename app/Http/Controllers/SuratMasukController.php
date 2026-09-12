@@ -4,21 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\SuratMasuk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SuratMasukController extends Controller
 {
     /**
-     * Menampilkan daftar surat masuk.
+     * Menampilkan daftar surat masuk
      */
     public function index()
     {
-        $suratMasuks = SuratMasuk::latest()->get();
+        $suratMasuks = SuratMasuk::latest('tanggal_diterima')->paginate(10);
 
         return view('surat-masuk.index', compact('suratMasuks'));
     }
 
     /**
-     * Menampilkan form tambah surat masuk.
+     * Form tambah surat
      */
     public function create()
     {
@@ -26,7 +27,7 @@ class SuratMasukController extends Controller
     }
 
     /**
-     * Menyimpan surat masuk baru.
+     * Menyimpan surat baru
      */
     public function store(Request $request)
     {
@@ -42,7 +43,8 @@ class SuratMasukController extends Controller
         ]);
 
         if ($request->hasFile('file_surat')) {
-            $validated['file_surat'] = $request->file('file_surat')
+            $validated['file_surat'] = $request
+                ->file('file_surat')
                 ->store('surat-masuk', 'public');
         }
 
@@ -54,7 +56,7 @@ class SuratMasukController extends Controller
     }
 
     /**
-     * Menampilkan detail surat masuk.
+     * Menampilkan detail surat
      */
     public function show(SuratMasuk $suratMasuk)
     {
@@ -62,7 +64,7 @@ class SuratMasukController extends Controller
     }
 
     /**
-     * Menampilkan form edit surat masuk.
+     * Form edit surat
      */
     public function edit(SuratMasuk $suratMasuk)
     {
@@ -70,7 +72,7 @@ class SuratMasukController extends Controller
     }
 
     /**
-     * Memperbarui surat masuk.
+     * Mengupdate surat
      */
     public function update(Request $request, SuratMasuk $suratMasuk)
     {
@@ -86,7 +88,13 @@ class SuratMasukController extends Controller
         ]);
 
         if ($request->hasFile('file_surat')) {
-            $validated['file_surat'] = $request->file('file_surat')
+
+            if ($suratMasuk->file_surat) {
+                Storage::disk('public')->delete($suratMasuk->file_surat);
+            }
+
+            $validated['file_surat'] = $request
+                ->file('file_surat')
                 ->store('surat-masuk', 'public');
         }
 
@@ -98,10 +106,14 @@ class SuratMasukController extends Controller
     }
 
     /**
-     * Menghapus surat masuk.
+     * Menghapus surat
      */
     public function destroy(SuratMasuk $suratMasuk)
     {
+        if ($suratMasuk->file_surat) {
+            Storage::disk('public')->delete($suratMasuk->file_surat);
+        }
+
         $suratMasuk->delete();
 
         return redirect()
