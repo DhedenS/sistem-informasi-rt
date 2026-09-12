@@ -12,6 +12,7 @@ use App\Http\Controllers\DueController;
 use App\Http\Controllers\CashflowReportController;
 use App\Http\Controllers\PengajuanIuranController;
 use App\Http\Controllers\VerifikasiIuranController;
+use App\Http\Controllers\IuranSayaController;
 
 
 /*
@@ -289,6 +290,10 @@ Route::middleware(['auth', 'role:Bendahara'])->group(function () {
 
     Route::post('/verifikasi-iuran/{pengajuanIuran}/reject', [VerifikasiIuranController::class, 'reject'])
         ->name('verifikasi-iuran.reject');
+});
+Route::middleware(['auth', 'role:Warga'])->group(function () {
+    Route::get('/iuran-saya', [IuranSayaController::class, 'index'])
+        ->name('iuran-saya.index');
 });
 
 
