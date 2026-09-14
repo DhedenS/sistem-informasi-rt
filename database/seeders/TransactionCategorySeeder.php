@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\TransactionCategory;
+use Illuminate\Database\Seeder;
 
 class TransactionCategorySeeder extends Seeder
 {
@@ -14,24 +13,27 @@ class TransactionCategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            // Kategori pemasukan
-            ['name' => 'Iuran Warga', 'type' => 'masuk'],
-            ['name' => 'Dana CSR', 'type' => 'masuk'],
-            ['name' => 'Sumbangan', 'type' => 'masuk'],
-            ['name' => 'Bantuan Pemerintah', 'type' => 'masuk'],
-            ['name' => 'Lain-lain', 'type' => 'masuk'],
+            // Pemasukan
+            ['name' => 'Iuran Warga', 'type' => 'masuk', 'is_active' => true],
+            ['name' => 'Dana CSR', 'type' => 'masuk', 'is_active' => true],
+            ['name' => 'Sumbangan', 'type' => 'masuk', 'is_active' => true],
+            ['name' => 'Bantuan Pemerintah', 'type' => 'masuk', 'is_active' => true],
+            ['name' => 'Lain-lain', 'type' => 'masuk', 'is_active' => true],
 
-            // Kategori pengeluaran
-            ['name' => 'Keamanan', 'type' => 'keluar'],
-            ['name' => 'Kebersihan', 'type' => 'keluar'],
-            ['name' => 'Infrastruktur', 'type' => 'keluar'],
-            ['name' => 'Sosial & Kegiatan', 'type' => 'keluar'],
-            ['name' => 'Administrasi & Operasional', 'type' => 'keluar'],
-            ['name' => 'Lain-lain', 'type' => 'keluar'],
+            // Pengeluaran
+            ['name' => 'Keamanan', 'type' => 'keluar', 'is_active' => true],
+            ['name' => 'Kebersihan', 'type' => 'keluar', 'is_active' => true],
+            ['name' => 'Infrastruktur', 'type' => 'keluar', 'is_active' => true],
+            ['name' => 'Sosial & Kegiatan', 'type' => 'keluar', 'is_active' => true],
+            ['name' => 'Administrasi & Operasional', 'type' => 'keluar', 'is_active' => true],
+            ['name' => 'Lain-lain', 'type' => 'keluar', 'is_active' => true],
         ];
 
-        foreach ($categories as $category) {
-            TransactionCategory::firstOrCreate($category);
+        foreach ($categories as $cat) {
+            TransactionCategory::firstOrCreate(
+                ['name' => $cat['name'], 'type' => $cat['type']],
+                $cat
+            );
         }
     }
 }

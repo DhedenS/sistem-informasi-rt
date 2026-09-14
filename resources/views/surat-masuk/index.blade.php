@@ -1,53 +1,56 @@
 <x-app-layout>
+
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             Administrasi Surat Masuk
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <div class="bg-white p-6 shadow rounded-lg">
+            <div class="bg-white shadow-sm rounded-lg p-6">
 
-                {{-- Pesan sukses --}}
-                @if (session('success'))
-                    <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
-                        {{ session('success') }}
-                    </div>
-                @endif
+                <div class="flex justify-between items-center mb-6">
 
-                {{-- Header tabel --}}
-                <div class="flex justify-between items-center mb-4">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-800">
+                        <h3 class="text-xl font-semibold text-gray-800">
                             Daftar Surat Masuk
                         </h3>
 
-                        <p class="text-sm text-gray-500">
+                        <p class="text-gray-500 mt-1">
                             Kelola surat masuk yang diterima oleh RT.
                         </p>
                     </div>
 
                     <a href="{{ route('surat-masuk.create') }}"
-                       class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                       class="px-5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                         + Tambah Surat
                     </a>
+
                 </div>
 
-                {{-- Tabel --}}
+                @if (session('success'))
+                    <div class="mb-5 p-4 bg-green-100 text-green-700 rounded-lg">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+
+                    <table class="w-full text-left">
 
                         <thead>
                             <tr class="border-b bg-gray-50">
-                                <th class="py-3 px-2">No</th>
-                                <th class="py-3 px-2">Nomor Surat</th>
-                                <th class="py-3 px-2">Tanggal Surat</th>
-                                <th class="py-3 px-2">Tanggal Diterima</th>
-                                <th class="py-3 px-2">Pengirim</th>
-                                <th class="py-3 px-2">Perihal</th>
-                                <th class="py-3 px-2">Aksi</th>
+
+                                <th class="px-4 py-3">No</th>
+                                <th class="px-4 py-3">Nomor Surat</th>
+                                <th class="px-4 py-3">Tanggal Surat</th>
+                                <th class="px-4 py-3">Tanggal Diterima</th>
+                                <th class="px-4 py-3">Pengirim</th>
+                                <th class="px-4 py-3">Perihal</th>
+                                <th class="px-4 py-3">Aksi</th>
+
                             </tr>
                         </thead>
 
@@ -57,59 +60,59 @@
 
                                 <tr class="border-b hover:bg-gray-50">
 
-                                    <td class="py-3 px-2">
-                                        {{ $loop->iteration }}
+                                    <td class="px-4 py-4">
+                                        {{ $loop->iteration + ($suratMasuks->currentPage() - 1) * $suratMasuks->perPage() }}
                                     </td>
 
-                                    <td class="py-3 px-2">
+                                    <td class="px-4 py-4 font-medium">
                                         {{ $surat->nomor_surat }}
                                     </td>
 
-                                    <td class="py-3 px-2">
+                                    <td class="px-4 py-4">
                                         {{ $surat->tanggal_surat->format('d-m-Y') }}
                                     </td>
 
-                                    <td class="py-3 px-2">
+                                    <td class="px-4 py-4">
                                         {{ $surat->tanggal_diterima->format('d-m-Y') }}
                                     </td>
 
-                                    <td class="py-3 px-2">
+                                    <td class="px-4 py-4">
                                         {{ $surat->pengirim }}
                                     </td>
 
-                                    <td class="py-3 px-2">
+                                    <td class="px-4 py-4">
                                         {{ $surat->perihal }}
                                     </td>
 
-                                    <td class="py-3 px-2 whitespace-nowrap">
+                                    <td class="px-4 py-4">
 
-                                        {{-- Detail --}}
-                                        <a href="{{ route('surat-masuk.show', $surat) }}"
-                                           class="text-blue-600 hover:underline mr-2">
-                                            Detail
-                                        </a>
+                                        <div class="flex gap-3">
 
-                                        {{-- Edit --}}
-                                        <a href="{{ route('surat-masuk.edit', $surat) }}"
-                                           class="text-yellow-600 hover:underline mr-2">
-                                            Edit
-                                        </a>
+                                            <a href="{{ route('surat-masuk.show', $surat) }}"
+                                               class="text-blue-600 hover:underline">
+                                                Lihat
+                                            </a>
 
-                                        {{-- Hapus --}}
-                                        <form action="{{ route('surat-masuk.destroy', $surat) }}"
-                                              method="POST"
-                                              class="inline"
-                                              onsubmit="return confirm('Yakin ingin menghapus surat ini?')">
+                                            <a href="{{ route('surat-masuk.edit', $surat) }}"
+                                               class="text-yellow-600 hover:underline">
+                                                Edit
+                                            </a>
 
-                                            @csrf
-                                            @method('DELETE')
+                                            <form action="{{ route('surat-masuk.destroy', $surat) }}"
+                                                  method="POST"
+                                                  onsubmit="return confirm('Yakin ingin menghapus surat ini?')">
 
-                                            <button type="submit"
-                                                    class="text-red-600 hover:underline">
-                                                Hapus
-                                            </button>
+                                                @csrf
+                                                @method('DELETE')
 
-                                        </form>
+                                                <button type="submit"
+                                                        class="text-red-600 hover:underline">
+                                                    Hapus
+                                                </button>
+
+                                            </form>
+
+                                        </div>
 
                                     </td>
 
@@ -119,7 +122,7 @@
 
                                 <tr>
                                     <td colspan="7"
-                                        class="py-8 text-center text-gray-500">
+                                        class="text-center py-10 text-gray-500">
                                         Belum ada data surat masuk.
                                     </td>
                                 </tr>
@@ -129,10 +132,16 @@
                         </tbody>
 
                     </table>
+
+                </div>
+
+                <div class="mt-5">
+                    {{ $suratMasuks->links() }}
                 </div>
 
             </div>
 
         </div>
     </div>
+
 </x-app-layout>

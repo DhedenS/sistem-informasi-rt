@@ -108,10 +108,11 @@
 
 
         {{-- APPROVAL --}}
-        <a
-            href="{{ route('approval.index') }}"
-            class="block bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-6 hover:border-blue-300 hover:shadow-md transition"
-        >
+        @hasanyrole('Ketua RT|Bendahara')
+       <a
+    href="{{ route('verifikasi-iuran.index') }}"
+    class="block bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-6 hover:border-blue-300 hover:shadow-md transition"
+>
 
             <div class="flex items-center justify-between gap-4">
 

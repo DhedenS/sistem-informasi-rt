@@ -2,19 +2,26 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Models\Approval;
+use App\Models\PengajuanIuran;
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BlockController;
 use App\Http\Controllers\HouseholdController;
 use App\Http\Controllers\TransactionCategoryController;
-use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\SuratMasukController;
-use App\Models\Approval;
-use App\Http\Controllers\BlockDepositController;
+use App\Http\Controllers\FundSourceController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\DueController;
+use App\Http\Controllers\CashflowReportController;
+use App\Http\Controllers\PengajuanIuranController;
+use App\Http\Controllers\VerifikasiIuranController;
+use App\Http\Controllers\IuranSayaController;
 
 
 /*
 |--------------------------------------------------------------------------
-| Public Routes
+| HOME
 |--------------------------------------------------------------------------
 */
 
@@ -25,149 +32,402 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Dashboard
+| DASHBOARD
 |--------------------------------------------------------------------------
 */
+
 Route::get('/dashboard', function () {
 
-    $pendingApprovals = Approval::whereNotIn('status', [
-        'approved',
-        'rejected',
-        'archived',
-    ])->count();
+    $pendingApprovals = 0;
 
-    return view('dashboard', compact('pendingApprovals'));
+    if (
+        auth()->user()->hasAnyRole([
+            'Ketua RT',
+            'Bendahara',
+        ])
+    ) {
+        $pendingApprovals = \App\Models\Approval::where(
+            'approvable_type',
+            \App\Models\PengajuanIuran::class
+        )
+            ->where('status', 'pending')
+            ->count();
+    }
+
+    return view(
+        'dashboard',
+        compact('pendingApprovals')
+    );
 
 })
-    ->middleware(['auth', 'verified'])
+    ->middleware([
+        'auth',
+        'verified',
+    ])
     ->name('dashboard');
+
 
 /*
 |--------------------------------------------------------------------------
-| Authenticated Routes
+| PROFILE
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('auth')->group(function () {
 
-    // =========================
-    // PROFILE
-    // =========================
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
+    Route::get(
+        '/profile',
+        [ProfileController::class, 'edit']
+    )->name('profile.edit');
 
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
+    Route::patch(
+        '/profile',
+        [ProfileController::class, 'update']
+    )->name('profile.update');
 
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
+    Route::delete(
+        '/profile',
+        [ProfileController::class, 'destroy']
+    )->name('profile.destroy');
 
-
-    // =========================
-    // APPROVAL
-    // Kategori 4
-    // =========================
-    Route::prefix('approval')
-        ->name('approval.')
-        ->group(function () {
-
-            Route::get('/', [ApprovalController::class, 'index'])
-                ->name('index');
-
-            Route::get('/{approval}', [ApprovalController::class, 'show'])
-                ->name('show');
-
-            Route::post('/{approval}/verify', [ApprovalController::class, 'verify'])
-                ->name('verify');
-
-            Route::post('/{approval}/approve', [ApprovalController::class, 'approve'])
-                ->name('approve');
-
-            Route::post('/{approval}/reject', [ApprovalController::class, 'reject'])
-                ->name('reject');
-
-            Route::post('/{approval}/revision', [ApprovalController::class, 'revision'])
-                ->name('revision');
-
-            Route::post('/{approval}/archive', [ApprovalController::class, 'archive'])
-                ->name('archive');
-        });
-
-
-    // =========================
-    // ADMINISTRASI SURAT
-    // Surat Masuk
-    // =========================
-    Route::resource('surat-masuk', SuratMasukController::class);
-
-    Route::prefix('block-deposits')
-    ->name('block-deposits.')
-    ->group(function () {
-
-        Route::get(
-            '/',
-            [BlockDepositController::class, 'index']
-        )->name('index');
-
-        Route::get(
-            '/create',
-            [BlockDepositController::class, 'create']
-        )->name('create');
-
-        Route::post(
-            '/',
-            [BlockDepositController::class, 'store']
-        )->name('store');
-
-        Route::get(
-            '/{blockDeposit}',
-            [BlockDepositController::class, 'show']
-        )->name('show');
-    });
 });
 
 
 /*
 |--------------------------------------------------------------------------
-| SUPERADMIN
+| ADMINISTRASI SURAT
 |--------------------------------------------------------------------------
-|
-| Hanya Superadmin yang boleh mengelola:
-| - Blok
-| - Kategori Transaksi
-|
 */
 
-Route::middleware(['auth', 'role:Superadmin'])->group(function () {
+Route::middleware([
+    'auth',
+    'role:Superadmin|Sekretaris',
+])->group(function () {
 
-    Route::resource('blocks', BlockController::class);
+    Route::resource(
+        'surat-masuk',
+        SuratMasukController::class
+    );
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| MASTER DATA
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware([
+    'auth',
+    'role:Superadmin|Ketua RT',
+])->group(function () {
+
+    Route::resource(
+        'blocks',
+        BlockController::class
+    );
 
     Route::resource(
         'transaction-categories',
         TransactionCategoryController::class
     );
+
+    Route::resource(
+        'fund-sources',
+        FundSourceController::class
+    );
+
 });
 
 
 /*
 |--------------------------------------------------------------------------
-| SUPERADMIN & BENDAHARA
+| DATA KK
 |--------------------------------------------------------------------------
-|
-| Superadmin dan Bendahara boleh mengelola data KK.
-|
 */
 
-Route::middleware(['auth', 'role:Superadmin|Bendahara'])->group(function () {
+Route::middleware([
+    'auth',
+    'role:Ketua RT|Bendahara',
+])->group(function () {
 
-    Route::resource('households', HouseholdController::class);
+    Route::get(
+        '/verifikasi-iuran',
+        [VerifikasiIuranController::class, 'index']
+    )->name('verifikasi-iuran.index');
+
+    Route::get(
+        '/verifikasi-iuran/{pengajuanIuran}',
+        [VerifikasiIuranController::class, 'show']
+    )->name('verifikasi-iuran.show');
+
+    Route::post(
+        '/verifikasi-iuran/{pengajuanIuran}/approve',
+        [VerifikasiIuranController::class, 'approve']
+    )->name('verifikasi-iuran.approve');
+
+    Route::post(
+        '/verifikasi-iuran/{pengajuanIuran}/reject',
+        [VerifikasiIuranController::class, 'reject']
+    )->name('verifikasi-iuran.reject');
+
 });
 
 
 /*
 |--------------------------------------------------------------------------
-| Authentication Routes
+| CASHFLOW
 |--------------------------------------------------------------------------
 */
+
+Route::middleware([
+    'auth',
+    'role:Superadmin|Bendahara',
+])->group(function () {
+
+    Route::prefix('cashflow')
+        ->name('cashflow.')
+        ->group(function () {
+
+            Route::get(
+                'transactions/create-income',
+                [
+                    TransactionController::class,
+                    'createIncome',
+                ]
+            )->name(
+                'transactions.create-income'
+            );
+
+            Route::post(
+                'transactions/store-income',
+                [
+                    TransactionController::class,
+                    'storeIncome',
+                ]
+            )->name(
+                'transactions.store-income'
+            );
+
+
+            Route::get(
+                'transactions/create-expense',
+                [
+                    TransactionController::class,
+                    'createExpense',
+                ]
+            )->name(
+                'transactions.create-expense'
+            );
+
+            Route::post(
+                'transactions/store-expense',
+                [
+                    TransactionController::class,
+                    'storeExpense',
+                ]
+            )->name(
+                'transactions.store-expense'
+            );
+
+
+            Route::resource(
+                'transactions',
+                TransactionController::class
+            )->except([
+                'create',
+                'store',
+                'edit',
+                'update',
+            ]);
+
+
+            Route::resource(
+                'dues',
+                DueController::class
+            )->only([
+                'index',
+                'create',
+                'store',
+            ]);
+
+            Route::post(
+                'dues/{due}/pay',
+                [
+                    DueController::class,
+                    'pay',
+                ]
+            )->name('dues.pay');
+
+
+            Route::get(
+                'reports',
+                [
+                    CashflowReportController::class,
+                    'index',
+                ]
+            )->name('reports.index');
+
+            Route::get(
+                'reports/pdf',
+                [
+                    CashflowReportController::class,
+                    'exportPdf',
+                ]
+            )->name('reports.pdf');
+
+            Route::get(
+                'reports/excel',
+                [
+                    CashflowReportController::class,
+                    'exportExcel',
+                ]
+            )->name('reports.excel');
+        });
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| PENGAJUAN IURAN - KETUA BLOCK
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware([
+    'auth',
+    'role:Ketua Block',
+])->group(function () {
+
+    Route::get(
+        '/pengajuan-iuran',
+        [
+            PengajuanIuranController::class,
+            'index',
+        ]
+    )->name(
+        'pengajuan-iuran.index'
+    );
+
+
+    Route::get(
+        '/pengajuan-iuran/create',
+        [
+            PengajuanIuranController::class,
+            'create',
+        ]
+    )->name(
+        'pengajuan-iuran.create'
+    );
+
+
+    Route::post(
+        '/pengajuan-iuran',
+        [
+            PengajuanIuranController::class,
+            'store',
+        ]
+    )->name(
+        'pengajuan-iuran.store'
+    );
+
+
+    Route::get(
+        '/pengajuan-iuran/{pengajuanIuran}',
+        [
+            PengajuanIuranController::class,
+            'show',
+        ]
+    )->name(
+        'pengajuan-iuran.show'
+    );
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| APPROVAL / VERIFIKASI IURAN
+|--------------------------------------------------------------------------
+|
+| Superadmin ikut diberikan akses untuk testing.
+|
+*/
+
+Route::middleware([
+    'auth',
+    'role:Superadmin|Bendahara',
+])->group(function () {
+
+    Route::get(
+        '/verifikasi-iuran',
+        [
+            VerifikasiIuranController::class,
+            'index',
+        ]
+    )->name(
+        'verifikasi-iuran.index'
+    );
+
+
+    Route::get(
+        '/verifikasi-iuran/{pengajuanIuran}',
+        [
+            VerifikasiIuranController::class,
+            'show',
+        ]
+    )->name(
+        'verifikasi-iuran.show'
+    );
+
+
+    Route::post(
+        '/verifikasi-iuran/{pengajuanIuran}/approve',
+        [
+            VerifikasiIuranController::class,
+            'approve',
+        ]
+    )->name(
+        'verifikasi-iuran.approve'
+    );
+
+
+    Route::post(
+        '/verifikasi-iuran/{pengajuanIuran}/reject',
+        [
+            VerifikasiIuranController::class,
+            'reject',
+        ]
+    )->name(
+        'verifikasi-iuran.reject'
+    );
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| WARGA
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware([
+    'auth',
+    'role:Warga',
+])->group(function () {
+
+    Route::get(
+        '/iuran-saya',
+        [
+            IuranSayaController::class,
+            'index',
+        ]
+    )->name(
+        'iuran-saya.index'
+    );
+
+});
+
 
 require __DIR__ . '/auth.php';

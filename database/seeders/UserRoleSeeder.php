@@ -10,35 +10,17 @@ class UserRoleSeeder extends Seeder
     public function run(): void
     {
         $users = [
-            [
-                'name' => 'Super Admin',
-                'email' => 'superadmin@rt.test',
-                'role' => 'Superadmin',
-            ],
-            [
-                'name' => 'Ketua RT',
-                'email' => 'ketuart@rt.test',
-                'role' => 'Ketua RT',
-            ],
-            [
-                'name' => 'Bendahara',
-                'email' => 'bendahara@rt.test',
-                'role' => 'Bendahara',
-            ],
-            [
-                'name' => 'Perwakilan Blok A',
-                'email' => 'perwakilan@rt.test',
-                'role' => 'Perwakilan Blok',
-            ],
+            ['name' => 'Ketua RT', 'email' => 'ketuart@rt.test', 'role' => 'Ketua RT'],
+            ['name' => 'Bendahara', 'email' => 'bendahara@rt.test', 'role' => 'Bendahara'],
+            ['name' => 'Sekretaris', 'email' => 'sekretaris@rt.test', 'role' => 'Sekretaris'],
+            ['name' => 'Ketua Block A', 'email' => 'ketuablock@rt.test', 'role' => 'Ketua Block'],
+            ['name' => 'Warga Contoh', 'email' => 'warga@rt.test', 'role' => 'Warga'],
         ];
 
         foreach ($users as $data) {
             $user = User::firstOrCreate(
                 ['email' => $data['email']],
-                [
-                    'name' => $data['name'],
-                    'password' => bcrypt('password'),
-                ]
+                ['name' => $data['name'], 'password' => bcrypt('password')]
             );
 
             $user->syncRoles([$data['role']]);
