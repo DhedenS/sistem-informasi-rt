@@ -297,51 +297,28 @@ Route::middleware([
 
 Route::middleware([
     'auth',
-    'role:Ketua Block',
+    'role:Perwakilan Blok',
 ])->group(function () {
 
     Route::get(
         '/pengajuan-iuran',
-        [
-            PengajuanIuranController::class,
-            'index',
-        ]
-    )->name(
-        'pengajuan-iuran.index'
-    );
-
+        [PengajuanIuranController::class, 'index']
+    )->name('pengajuan-iuran.index');
 
     Route::get(
         '/pengajuan-iuran/create',
-        [
-            PengajuanIuranController::class,
-            'create',
-        ]
-    )->name(
-        'pengajuan-iuran.create'
-    );
-
+        [PengajuanIuranController::class, 'create']
+    )->name('pengajuan-iuran.create');
 
     Route::post(
         '/pengajuan-iuran',
-        [
-            PengajuanIuranController::class,
-            'store',
-        ]
-    )->name(
-        'pengajuan-iuran.store'
-    );
-
+        [PengajuanIuranController::class, 'store']
+    )->name('pengajuan-iuran.store');
 
     Route::get(
         '/pengajuan-iuran/{pengajuanIuran}',
-        [
-            PengajuanIuranController::class,
-            'show',
-        ]
-    )->name(
-        'pengajuan-iuran.show'
-    );
+        [PengajuanIuranController::class, 'show']
+    )->name('pengajuan-iuran.show');
 
 });
 
@@ -354,7 +331,6 @@ Route::middleware([
 | Superadmin ikut diberikan akses untuk testing.
 |
 */
-
 Route::middleware([
     'auth',
     'role:Superadmin|Bendahara',
@@ -362,46 +338,23 @@ Route::middleware([
 
     Route::get(
         '/verifikasi-iuran',
-        [
-            VerifikasiIuranController::class,
-            'index',
-        ]
-    )->name(
-        'verifikasi-iuran.index'
-    );
-
+        [VerifikasiIuranController::class, 'index']
+    )->name('verifikasi-iuran.index');
 
     Route::get(
         '/verifikasi-iuran/{pengajuanIuran}',
-        [
-            VerifikasiIuranController::class,
-            'show',
-        ]
-    )->name(
-        'verifikasi-iuran.show'
-    );
-
+        [VerifikasiIuranController::class, 'show']
+    )->name('verifikasi-iuran.show');
 
     Route::post(
         '/verifikasi-iuran/{pengajuanIuran}/approve',
-        [
-            VerifikasiIuranController::class,
-            'approve',
-        ]
-    )->name(
-        'verifikasi-iuran.approve'
-    );
-
+        [VerifikasiIuranController::class, 'approve']
+    )->name('verifikasi-iuran.approve');
 
     Route::post(
         '/verifikasi-iuran/{pengajuanIuran}/reject',
-        [
-            VerifikasiIuranController::class,
-            'reject',
-        ]
-    )->name(
-        'verifikasi-iuran.reject'
-    );
+        [VerifikasiIuranController::class, 'reject']
+    )->name('verifikasi-iuran.reject');
 
 });
 
