@@ -5,56 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PengajuanIuran extends Model
+class PengajuanIuranDetail extends Model
 {
     use HasFactory;
 
-    protected $table = 'pengajuan_iuran';
+    protected $table = 'pengajuan_iuran_detail';
 
     protected $fillable = [
-        'block_id',
-        'user_id',
-        'bulan',
-        'tahun',
-        'nominal_per_kk',
-        'total_iuran',
-        'uang_diterima',
-        'bukti',
-        'status',
-        'catatan',
-        'diverifikasi_oleh',
-        'diverifikasi_pada',
+        'pengajuan_iuran_id',
+        'household_id',
     ];
 
-    protected $casts = [
-        'nominal_per_kk' => 'decimal:2',
-        'total_iuran' => 'decimal:2',
-        'uang_diterima' => 'decimal:2',
-        'diverifikasi_pada' => 'datetime',
-    ];
-
-    public function block()
+    // Pengajuan iuran
+    public function pengajuanIuran()
     {
-        return $this->belongsTo(Block::class);
+        return $this->belongsTo(PengajuanIuran::class);
     }
 
-    public function user()
+    // KK yang dipilih
+    public function household()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function verifier()
-    {
-        return $this->belongsTo(User::class, 'diverifikasi_oleh');
-    }
-
-    public function details()
-    {
-        return $this->hasMany(PengajuanIuranDetail::class);
-    }
-
-    public function approval()
-    {
-        return $this->morphOne(Approval::class, 'approvable');
+        return $this->belongsTo(Household::class);
     }
 }

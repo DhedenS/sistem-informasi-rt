@@ -35,8 +35,4 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function approvals()
-{
-    return $this->hasMany(Approval::class);
-}
 }

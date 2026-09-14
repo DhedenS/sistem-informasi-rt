@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Due;
-use App\Models\Approval;
 use App\Models\PengajuanIuran;
 use App\Models\Transaction;
 use App\Models\TransactionCategory;
@@ -14,42 +13,31 @@ class VerifikasiIuranController extends Controller
 {
     public function index()
     {
-        $pengajuan = PengajuanIuran::with([
-            'block',
-            'user',
-            'approval',
-        ])
+        $pengajuan = PengajuanIuran::with(['block', 'user'])
             ->withCount('details')
             ->latest()
             ->paginate(10);
 
-        return view(
-            'verifikasi-iuran.index',
-            compact('pengajuan')
-        );
+        return view('verifikasi-iuran.index', compact('pengajuan'));
     }
 
-    public function show(
-        PengajuanIuran $pengajuanIuran
-    ) {
+    public function show(PengajuanIuran $pengajuanIuran)
+    {
         $pengajuanIuran->load([
             'block',
             'user',
             'verifier',
             'details.household',
-            'approval.histories.user',
         ]);
 
-        return view(
-            'verifikasi-iuran.show',
-            compact('pengajuanIuran')
-        );
+        return view('verifikasi-iuran.show', compact('pengajuanIuran'));
     }
 
-    public function approve(
-        Request $request,
-        PengajuanIuran $pengajuanIuran
-    ) {
+    public function approve(Request $request, PengajuanIuran $pengajuanIuran)
+    {
+        /*
+         * Validasi input uang yang benar-benar diterima.
+         */
         $request->validate([
             'uang_diterima' => [
                 'required',
@@ -57,46 +45,32 @@ class VerifikasiIuranController extends Controller
                 'min:0',
             ],
         ], [
-            'uang_diterima.required' =>
-                'Uang yang diterima wajib diisi.',
-
-            'uang_diterima.numeric' =>
-                'Uang yang diterima harus berupa angka.',
-
-            'uang_diterima.min' =>
-                'Uang yang diterima tidak boleh kurang dari 0.',
+            'uang_diterima.required' => 'Uang yang diterima wajib diisi.',
+            'uang_diterima.numeric' => 'Uang yang diterima harus berupa angka.',
+            'uang_diterima.min' => 'Uang yang diterima tidak boleh kurang dari 0.',
         ]);
 
         /*
-         * Karena nominal iuran kita menggunakan rupiah,
-         * bulatkan sebelum dibandingkan.
+         * Ambil nilai dalam satuan sen/rupiah tanpa desimal
+         * untuk perbandingan yang lebih aman.
          */
         $uangDiterima = (int) round(
-            (float) $request->uang_diterima
+            ((float) $request->uang_diterima) * 100
         );
 
         $totalIuran = (int) round(
-            (float) $pengajuanIuran->total_iuran
+            ((float) $pengajuanIuran->total_iuran) * 100
         );
 
         /*
-         * Validasi otomatis.
+         * Uang diterima HARUS sama dengan total iuran.
          */
         if ($uangDiterima !== $totalIuran) {
-            $selisih =
-                $uangDiterima - $totalIuran;
-
             return back()
                 ->withInput()
                 ->with(
                     'error',
-                    'Nominal tidak sesuai. Selisih Rp ' .
-                    number_format(
-                        abs($selisih),
-                        0,
-                        ',',
-                        '.'
-                    )
+                    'Pengajuan tidak dapat disetujui karena uang yang diterima tidak sesuai dengan total iuran.'
                 );
         }
 
@@ -105,8 +79,8 @@ class VerifikasiIuranController extends Controller
             $request
         ) {
             /*
-             * Lock agar tidak bisa diproses
-             * dua kali bersamaan.
+             * Lock data pengajuan agar tidak bisa diproses
+             * bersamaan oleh dua request.
              */
             $pengajuan = PengajuanIuran::where(
                 'id',
@@ -115,10 +89,11 @@ class VerifikasiIuranController extends Controller
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            if (
-                $pengajuan->status
-                !== 'Menunggu Verifikasi'
-            ) {
+            /*
+             * Cegah pengajuan yang sudah diproses
+             * untuk diproses kembali.
+             */
+            if ($pengajuan->status !== 'Menunggu Verifikasi') {
                 abort(
                     409,
                     'Pengajuan ini sudah diproses sebelumnya.'
@@ -131,39 +106,21 @@ class VerifikasiIuranController extends Controller
             ]);
 
             /*
-             * =====================================================
-             * Tandai iuran KK sebagai LUNAS
-             * =====================================================
+             * Tandai semua KK yang terdapat dalam pengajuan
+             * sebagai sudah lunas.
              */
-
-            foreach (
-                $pengajuan->details
-                as $detail
-            ) {
+            foreach ($pengajuan->details as $detail) {
                 Due::updateOrCreate(
                     [
-                        'household_id' =>
-                            $detail->household_id,
-
-                        'month' =>
-                            $pengajuan->bulan,
-
-                        'year' =>
-                            $pengajuan->tahun,
+                        'household_id' => $detail->household_id,
+                        'month' => $pengajuan->bulan,
+                        'year' => $pengajuan->tahun,
                     ],
                     [
-                        'amount' =>
-                            $pengajuan->nominal_per_kk,
-
-                        'paid_amount' =>
-                            $pengajuan->nominal_per_kk,
-
-                        'status' =>
-                            'Lunas',
-
-                        'payment_date' =>
-                            now(),
-
+                        'amount' => $pengajuan->nominal_per_kk,
+                        'paid_amount' => $pengajuan->nominal_per_kk,
+                        'status' => 'Lunas',
+                        'payment_date' => now(),
                         'notes' =>
                             'Pembayaran melalui pengajuan iuran #' .
                             $pengajuan->id,
@@ -172,40 +129,24 @@ class VerifikasiIuranController extends Controller
             }
 
             /*
-             * =====================================================
-             * MASUK CASHFLOW
-             * =====================================================
+             * Cari kategori transaksi Iuran Warga.
              */
+            $category = TransactionCategory::where(
+                'name',
+                'Iuran Warga'
+            )->firstOrFail();
 
-            $category =
-                TransactionCategory::where(
-                    'name',
-                    'Iuran Warga'
-                )
-                ->firstOrFail();
-
+            /*
+             * Catat penerimaan ke cashflow.
+             */
             Transaction::create([
-                'transaction_date' =>
-                    now()->toDateString(),
-
-                'type' =>
-                    'masuk',
-
-                'fund_source_id' =>
-                    null,
-
-                'transaction_category_id' =>
-                    $category->id,
-
-                'household_id' =>
-                    null,
-
-                'due_id' =>
-                    null,
-
-                'amount' =>
-                    $pengajuan->total_iuran,
-
+                'transaction_date' => now()->toDateString(),
+                'type' => 'masuk',
+                'fund_source_id' => null,
+                'transaction_category_id' => $category->id,
+                'household_id' => null,
+                'due_id' => null,
+                'amount' => $pengajuan->total_iuran,
                 'description' =>
                     'Penerimaan iuran Blok ' .
                     $pengajuan->block->name .
@@ -215,112 +156,27 @@ class VerifikasiIuranController extends Controller
                     $pengajuan->tahun .
                     ' - Pengajuan #' .
                     $pengajuan->id,
-
-                'proof_file' =>
-                    $pengajuan->bukti,
-
-                'user_id' =>
-                    auth()->id(),
+                'proof_file' => $pengajuan->bukti,
+                'user_id' => auth()->id(),
             ]);
 
             /*
-             * Update PengajuanIuran.
+             * Simpan uang yang benar-benar diterima
+             * dan ubah status menjadi Disetujui.
              */
             $pengajuan->update([
-                'uang_diterima' =>
-                    $request->uang_diterima,
-
-                'status' =>
-                    'Disetujui',
-
-                'diverifikasi_oleh' =>
-                    auth()->id(),
-
-                'diverifikasi_pada' =>
-                    now(),
+                'uang_diterima' => $request->uang_diterima,
+                'status' => 'Disetujui',
+                'diverifikasi_oleh' => auth()->id(),
+                'diverifikasi_pada' => now(),
             ]);
-
-            /*
-             * =====================================================
-             * KATEGORI 4 - APPROVAL
-             * =====================================================
-             */
-
-            $approval = Approval::firstOrCreate(
-                [
-                    'approvable_type' =>
-                        PengajuanIuran::class,
-
-                    'approvable_id' =>
-                        $pengajuan->id,
-                ],
-                [
-                    'user_id' =>
-                        $pengajuan->user_id,
-
-                    'status' =>
-                        Approval::STATUS_PENDING,
-
-                    'notes' =>
-                        $pengajuan->catatan,
-
-                    'acted_at' =>
-                        $pengajuan->created_at,
-                ]
-            );
-
-            $oldStatus =
-                $approval->status;
-
-            $approval->update([
-                'status' =>
-                    Approval::STATUS_APPROVED,
-
-                'notes' =>
-                    'Nominal telah sesuai dengan total tagihan.',
-
-                'acted_at' =>
-                    now(),
-            ]);
-
-            /*
-             * Audit Trail.
-             */
-            $approval
-                ->histories()
-                ->create([
-                    'user_id' =>
-                        auth()->id(),
-
-                    'action' =>
-                        'approve',
-
-                    'from_status' =>
-                        $oldStatus,
-
-                    'to_status' =>
-                        Approval::STATUS_APPROVED,
-
-                    'notes' =>
-                        'Uang diterima Rp ' .
-                        number_format(
-                            $request->uang_diterima,
-                            0,
-                            ',',
-                            '.'
-                        ) .
-                        ' sesuai dengan total iuran.',
-
-                    'acted_at' =>
-                        now(),
-                ]);
         });
 
         return redirect()
             ->route('verifikasi-iuran.index')
             ->with(
                 'success',
-                'Pengajuan berhasil disetujui dan masuk ke cashflow.'
+                'Pengajuan iuran berhasil disetujui dan dicatat ke cashflow.'
             );
     }
 
@@ -328,6 +184,13 @@ class VerifikasiIuranController extends Controller
         Request $request,
         PengajuanIuran $pengajuanIuran
     ) {
+        if ($pengajuanIuran->status !== 'Menunggu Verifikasi') {
+            return back()->with(
+                'error',
+                'Pengajuan ini sudah diproses sebelumnya.'
+            );
+        }
+
         $request->validate([
             'catatan' => [
                 'required',
@@ -339,107 +202,12 @@ class VerifikasiIuranController extends Controller
                 'Alasan penolakan wajib diisi.',
         ]);
 
-        DB::transaction(function () use (
-            $request,
-            $pengajuanIuran
-        ) {
-            $pengajuan =
-                PengajuanIuran::where(
-                    'id',
-                    $pengajuanIuran->id
-                )
-                ->lockForUpdate()
-                ->firstOrFail();
-
-            if (
-                $pengajuan->status
-                !== 'Menunggu Verifikasi'
-            ) {
-                abort(
-                    409,
-                    'Pengajuan ini sudah diproses sebelumnya.'
-                );
-            }
-
-            $pengajuan->update([
-                'status' =>
-                    'Ditolak',
-
-                'catatan' =>
-                    $request->catatan,
-
-                'diverifikasi_oleh' =>
-                    auth()->id(),
-
-                'diverifikasi_pada' =>
-                    now(),
-            ]);
-
-            /*
-             * Sinkronkan Approval.
-             */
-            $approval = Approval::firstOrCreate(
-                [
-                    'approvable_type' =>
-                        PengajuanIuran::class,
-
-                    'approvable_id' =>
-                        $pengajuan->id,
-                ],
-                [
-                    'user_id' =>
-                        $pengajuan->user_id,
-
-                    'status' =>
-                        Approval::STATUS_PENDING,
-
-                    'notes' =>
-                        null,
-
-                    'acted_at' =>
-                        $pengajuan->created_at,
-                ]
-            );
-
-            $oldStatus =
-                $approval->status;
-
-            $approval->update([
-                'status' =>
-                    Approval::STATUS_REJECTED,
-
-                'notes' =>
-                    $request->catatan,
-
-                'acted_at' =>
-                    now(),
-            ]);
-
-            /*
-             * Audit Trail.
-             */
-            $approval
-                ->histories()
-                ->create([
-                    'user_id' =>
-                        auth()->id(),
-
-                    'action' =>
-                        'reject',
-
-                    'from_status' =>
-                        $oldStatus,
-
-                    'to_status' =>
-                        Approval::STATUS_REJECTED,
-
-                    'notes' =>
-                        $request->catatan,
-
-                    'acted_at' =>
-                        now(),
-                ]);
-        });
+        $pengajuanIuran->update([
+            'status' => 'Ditolak',
+            'catatan' => $request->catatan,
+            'diverifikasi_oleh' => auth()->id(),
+            'diverifikasi_pada' => now(),
+        ]);
 
         return redirect()
             ->route('verifikasi-iuran.index')
