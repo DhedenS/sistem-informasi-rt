@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             BlockSeeder::class,
             HouseholdSeeder::class,
             TransactionCategorySeeder::class,
+            UserRoleSeeder::class,
         ]);
     }
 }

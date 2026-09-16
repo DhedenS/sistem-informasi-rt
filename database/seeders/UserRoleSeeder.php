@@ -17,11 +17,26 @@ class UserRoleSeeder extends Seeder
             ['name' => 'Warga Contoh', 'email' => 'warga@rt.test', 'role' => 'Warga'],
         ];
 
+        $blockA = \App\Models\Block::first();
+
         foreach ($users as $data) {
+            $userData = [
+                'name' => $data['name'],
+                'password' => bcrypt('password'),
+            ];
+
+            if ($data['role'] === 'Ketua Block' && $blockA) {
+                $userData['block_id'] = $blockA->id;
+            }
+
             $user = User::firstOrCreate(
                 ['email' => $data['email']],
-                ['name' => $data['name'], 'password' => bcrypt('password')]
+                $userData
             );
+
+            if ($data['role'] === 'Ketua Block' && $blockA && !$user->block_id) {
+                $user->update(['block_id' => $blockA->id]);
+            }
 
             $user->syncRoles([$data['role']]);
         }
