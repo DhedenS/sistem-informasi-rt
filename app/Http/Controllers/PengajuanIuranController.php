@@ -32,28 +32,22 @@ class PengajuanIuranController extends Controller
     {
         $user = auth()->user();
 
-        // Pastikan Ketua Block sudah memiliki blok
-        if (!$user->block_id) {
-            return redirect()
-                ->route('dashboard')
+        if (! $user->block_id) {
+            return redirect()->route('dashboard')
                 ->with('error', 'Akun Ketua Block belum memiliki blok.');
         }
 
-        // Hanya mengambil KK dari blok Ketua Block yang sedang login
         $households = Household::where('block_id', $user->block_id)
             ->where('is_active', true)
             ->orderBy('household_number')
             ->get();
 
         $block = Block::find($user->block_id);
-
-        // Nominal tetap sesuai ketentuan sistem
         $nominalPerKK = 30000;
+        $totalHouseholds = $households->count(); // total KK aktif di blok
 
         return view('pengajuan-iuran.create', compact(
-            'households',
-            'block',
-            'nominalPerKK'
+            'households', 'block', 'nominalPerKK', 'totalHouseholds'
         ));
     }
 
@@ -89,13 +83,19 @@ class PengajuanIuranController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'household_ids' => 'Terdapat KK yang bukan bagian dari blok Anda.'
+                    'household_ids' => 'Terdapat KK yang bukan bagian dari blok Anda.',
                 ]);
         }
 
         $nominalPerKK = 30000;
         $jumlahKK = $households->count();
         $totalIuran = $jumlahKK * $nominalPerKK;
+
+        $totalHouseholdsAktif = Household::where('block_id', $user->block_id)
+            ->where('is_active', true)
+            ->count();
+
+        $kkBelumBayar = $totalHouseholdsAktif - $jumlahKK;
 
         DB::transaction(function () use (
             $request,
@@ -130,9 +130,13 @@ class PengajuanIuranController extends Controller
             }
         });
 
+        $pesanTambahan = $kkBelumBayar > 0
+            ? " ({$kkBelumBayar} KK belum membayar dari total {$totalHouseholdsAktif} KK)"
+            : '';
+
         return redirect()
             ->route('pengajuan-iuran.index')
-            ->with('success', 'Pengajuan iuran berhasil dikirim dan menunggu verifikasi Bendahara.');
+            ->with('success', 'Pengajuan iuran berhasil dikirim dan menunggu verifikasi Bendahara.'.$pesanTambahan);
     }
 
     /**
@@ -142,7 +146,6 @@ class PengajuanIuranController extends Controller
     {
         $user = auth()->user();
 
-        // Ketua Block hanya boleh melihat pengajuan bloknya sendiri
         if ($pengajuanIuran->block_id !== $user->block_id) {
             abort(403);
         }
@@ -151,9 +154,21 @@ class PengajuanIuranController extends Controller
             'block',
             'user',
             'verifier',
-            'details.household'
+            'details.household',
         ]);
 
-        return view('pengajuan-iuran.show', compact('pengajuanIuran'));
+        // ID household yang sudah diajukan
+        $householdIdsDiajukan = $pengajuanIuran->details->pluck('household_id');
+
+        // KK yang belum diajukan/belum bayar
+        $householdsBelumBayar = Household::where('block_id', $pengajuanIuran->block_id)
+            ->where('is_active', true)
+            ->whereNotIn('id', $householdIdsDiajukan)
+            ->orderBy('household_number')
+            ->get();
+
+        return view('pengajuan-iuran.show', compact(
+            'pengajuanIuran', 'householdsBelumBayar'
+        ));
     }
 }

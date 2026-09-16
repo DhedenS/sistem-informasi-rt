@@ -16,7 +16,8 @@
 
             {{-- Notifikasi Success --}}
             @if (session('success'))
-                <div class="mb-5 rounded-lg bg-green-100 border border-green-200
+                <div
+                    class="mb-5 rounded-lg bg-green-100 border border-green-200
                             px-4 py-3 text-green-800">
                     {{ session('success') }}
                 </div>
@@ -24,7 +25,8 @@
 
             {{-- Notifikasi Error --}}
             @if (session('error'))
-                <div class="mb-5 rounded-lg bg-red-100 border border-red-200
+                <div
+                    class="mb-5 rounded-lg bg-red-100 border border-red-200
                             px-4 py-3 text-red-800">
                     {{ session('error') }}
                 </div>
@@ -32,7 +34,8 @@
 
             {{-- Error Validasi --}}
             @if ($errors->any())
-                <div class="mb-5 rounded-lg bg-red-100 border border-red-200
+                <div
+                    class="mb-5 rounded-lg bg-red-100 border border-red-200
                             px-4 py-3 text-red-800">
 
                     <p class="font-semibold mb-2">
@@ -55,7 +58,8 @@
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-5">
 
-                <div class="flex flex-col sm:flex-row sm:items-center
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center
                             sm:justify-between gap-4">
 
                     <div>
@@ -73,29 +77,26 @@
                     <div>
 
                         @if ($pengajuanIuran->status === 'Menunggu Verifikasi')
-
-                            <span class="inline-flex items-center px-4 py-2
+                            <span
+                                class="inline-flex items-center px-4 py-2
                                          rounded-full text-sm font-semibold
                                          bg-yellow-100 text-yellow-800">
                                 Menunggu Verifikasi
                             </span>
-
                         @elseif ($pengajuanIuran->status === 'Disetujui')
-
-                            <span class="inline-flex items-center px-4 py-2
+                            <span
+                                class="inline-flex items-center px-4 py-2
                                          rounded-full text-sm font-semibold
                                          bg-green-100 text-green-800">
                                 Disetujui
                             </span>
-
                         @else
-
-                            <span class="inline-flex items-center px-4 py-2
+                            <span
+                                class="inline-flex items-center px-4 py-2
                                          rounded-full text-sm font-semibold
                                          bg-red-100 text-red-800">
                                 Ditolak
                             </span>
-
                         @endif
 
                     </div>
@@ -109,7 +110,8 @@
             {{-- INFORMASI PENGAJUAN --}}
             {{-- ========================================================= --}}
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200
+            <div
+                class="bg-white rounded-xl shadow-sm border border-gray-200
                         overflow-hidden mb-5">
 
                 <div class="p-5 border-b border-gray-200">
@@ -160,12 +162,18 @@
                     {{-- Jumlah KK --}}
                     <div>
                         <p class="text-sm text-gray-500">
-                            Jumlah KK
+                            Jumlah KK Diajukan
                         </p>
 
                         <p class="mt-1 font-semibold text-gray-800">
-                            {{ $pengajuanIuran->details->count() }} KK
+                            {{ $pengajuanIuran->details->count() }} dari {{ $totalHouseholdsAktif }} KK aktif
                         </p>
+
+                        @if ($kkBelumBayar > 0)
+                            <p class="mt-1 text-sm font-medium text-yellow-700">
+                                ⚠ {{ $kkBelumBayar }} KK belum membayar
+                            </p>
+                        @endif
                     </div>
 
                     {{-- Nominal --}}
@@ -175,12 +183,8 @@
                         </p>
 
                         <p class="mt-1 font-semibold text-gray-800">
-                            Rp {{ number_format(
-                                $pengajuanIuran->nominal_per_kk,
-                                0,
-                                ',',
-                                '.'
-                            ) }}
+                            Rp
+                            {{ number_format($pengajuanIuran->nominal_per_kk, 0, ',', '.') }}
                         </p>
                     </div>
 
@@ -191,12 +195,8 @@
                         </p>
 
                         <p class="mt-1 text-xl font-bold text-green-600">
-                            Rp {{ number_format(
-                                $pengajuanIuran->total_iuran,
-                                0,
-                                ',',
-                                '.'
-                            ) }}
+                            Rp
+                            {{ number_format($pengajuanIuran->total_iuran, 0, ',', '.') }}
                         </p>
                     </div>
 
@@ -209,7 +209,8 @@
             {{-- DAFTAR KK --}}
             {{-- ========================================================= --}}
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200
+            <div
+                class="bg-white rounded-xl shadow-sm border border-gray-200
                         overflow-hidden mb-5">
 
                 <div class="p-5 border-b border-gray-200">
@@ -230,11 +231,11 @@
                     <div class="divide-y divide-gray-200">
 
                         @foreach ($pengajuanIuran->details as $index => $detail)
-
                             <div class="p-4 flex items-center gap-4">
 
                                 {{-- Nomor --}}
-                                <div class="w-9 h-9 shrink-0 rounded-full
+                                <div
+                                    class="w-9 h-9 shrink-0 rounded-full
                                             bg-blue-100 text-blue-700
                                             flex items-center justify-center
                                             font-semibold text-sm">
@@ -258,12 +259,8 @@
                                 <div class="text-right">
 
                                     <p class="font-semibold text-gray-800">
-                                        Rp {{ number_format(
-                                            $pengajuanIuran->nominal_per_kk,
-                                            0,
-                                            ',',
-                                            '.'
-                                        ) }}
+                                        Rp
+                                        {{ number_format($pengajuanIuran->nominal_per_kk, 0, ',', '.') }}
                                     </p>
 
                                     <p class="text-xs text-green-600">
@@ -273,13 +270,10 @@
                                 </div>
 
                             </div>
-
                         @endforeach
 
                     </div>
-
                 @else
-
                     <div class="p-6 text-center text-gray-500">
                         Tidak ada KK dalam pengajuan ini.
                     </div>
@@ -293,7 +287,8 @@
             {{-- BUKTI PEMBAYARAN --}}
             {{-- ========================================================= --}}
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200
+            <div
+                class="bg-white rounded-xl shadow-sm border border-gray-200
                         overflow-hidden mb-5">
 
                 <div class="p-5 border-b border-gray-200">
@@ -307,10 +302,8 @@
                 <div class="p-5">
 
                     @if ($pengajuanIuran->bukti)
-
-                        <a href="{{ asset('storage/' . $pengajuanIuran->bukti) }}"
-                           target="_blank"
-                           class="inline-flex items-center justify-center
+                        <a href="{{ asset('storage/' . $pengajuanIuran->bukti) }}" target="_blank"
+                            class="inline-flex items-center justify-center
                                   w-full sm:w-auto px-5 py-3
                                   rounded-lg bg-blue-600 text-white
                                   font-medium hover:bg-blue-700">
@@ -322,14 +315,12 @@
                         <p class="text-xs text-gray-500 mt-2">
                             Bukti akan dibuka pada tab baru.
                         </p>
-
                     @else
-
-                        <div class="rounded-lg bg-gray-50 border border-gray-200
+                        <div
+                            class="rounded-lg bg-gray-50 border border-gray-200
                                     p-4 text-sm text-gray-500">
                             Tidak ada bukti pembayaran yang dilampirkan.
                         </div>
-
                     @endif
 
                 </div>
@@ -342,8 +333,8 @@
             {{-- ========================================================= --}}
 
             @if ($pengajuanIuran->catatan)
-
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200
+                <div
+                    class="bg-white rounded-xl shadow-sm border border-gray-200
                             overflow-hidden mb-5">
 
                     <div class="p-5 border-b border-gray-200">
@@ -356,7 +347,8 @@
 
                     <div class="p-5">
 
-                        <div class="rounded-lg bg-gray-50 border border-gray-200
+                        <div
+                            class="rounded-lg bg-gray-50 border border-gray-200
                                     p-4 text-sm text-gray-700 whitespace-pre-line">
                             {{ $pengajuanIuran->catatan }}
                         </div>
@@ -364,7 +356,6 @@
                     </div>
 
                 </div>
-
             @endif
 
 
@@ -373,8 +364,8 @@
             {{-- ========================================================= --}}
 
             @if ($pengajuanIuran->status !== 'Menunggu Verifikasi')
-
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200
+                <div
+                    class="bg-white rounded-xl shadow-sm border border-gray-200
                             overflow-hidden mb-5">
 
                     <div class="p-5 border-b border-gray-200">
@@ -416,19 +407,14 @@
                             </p>
 
                             <p class="mt-1 text-lg font-bold text-green-600">
-                                Rp {{ number_format(
-                                    $pengajuanIuran->uang_diterima ?? 0,
-                                    0,
-                                    ',',
-                                    '.'
-                                ) }}
+                                Rp
+                                {{ number_format($pengajuanIuran->uang_diterima ?? 0, 0, ',', '.') }}
                             </p>
                         </div>
 
                     </div>
 
                 </div>
-
             @endif
 
 
@@ -437,8 +423,8 @@
             {{-- ========================================================= --}}
 
             @if ($pengajuanIuran->status === 'Menunggu Verifikasi')
-
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200
+                <div
+                    class="bg-white rounded-xl shadow-sm border border-gray-200
                             overflow-hidden mb-5">
 
                     <div class="p-5 border-b border-gray-200">
@@ -461,30 +447,41 @@
                         {{-- FORM APPROVAL --}}
                         {{-- ================================================= --}}
 
-                        <form method="POST"
-                              action="{{ route(
-                                  'verifikasi-iuran.approve',
-                                  $pengajuanIuran
-                              ) }}"
-                              id="form-approve">
+                        <form method="POST" action="{{ route('verifikasi-iuran.approve', $pengajuanIuran) }}"
+                            id="form-approve">
 
                             @csrf
-
+                            @if ($kkBelumBayar > 0)
+                                <div class="rounded-lg bg-yellow-50 border border-yellow-200 p-4 mb-5">
+                                    <p class="font-semibold text-yellow-800">
+                                        ⚠ Perhatian: Belum semua KK membayar
+                                    </p>
+                                    <p class="text-sm text-yellow-700 mt-1">
+                                        Pengajuan ini hanya mencakup {{ $pengajuanIuran->details->count() }}
+                                        dari {{ $totalHouseholdsAktif }} KK aktif di blok ini.
+                                        {{ $kkBelumBayar }} KK belum tercatat membayar iuran periode ini.
+                                    </p>
+                                    <p class="text-sm text-yellow-700 mt-2">
+                                        Jika seluruh {{ $totalHouseholdsAktif }} KK membayar,
+                                        total seharusnya: Rp
+                                        {{ number_format($totalHouseholdsAktif * $pengajuanIuran->nominal_per_kk, 0, ',', '.') }}
+                                        ({{ $totalHouseholdsAktif }} KK × Rp
+                                        {{ number_format($pengajuanIuran->nominal_per_kk, 0, ',', '.') }})
+                                    </p>
+                                </div>
+                            @endif
                             {{-- Total Sistem --}}
-                            <div class="rounded-lg bg-blue-50 border border-blue-200
+                            <div
+                                class="rounded-lg bg-blue-50 border border-blue-200
                                         p-4 mb-5">
 
                                 <p class="text-sm text-blue-700">
-                                    Total yang harus diterima
+                                    Total yang diterima
                                 </p>
 
                                 <p class="text-2xl font-bold text-blue-800 mt-1">
-                                    Rp {{ number_format(
-                                        $pengajuanIuran->total_iuran,
-                                        0,
-                                        ',',
-                                        '.'
-                                    ) }}
+                                    Rp
+                                    {{ number_format($pengajuanIuran->total_iuran, 0, ',', '.') }}
                                 </p>
 
                             </div>
@@ -494,7 +491,7 @@
                             <div class="mb-5">
 
                                 <label for="uang_diterima"
-                                       class="block text-sm font-semibold
+                                    class="block text-sm font-semibold
                                               text-gray-700 mb-2">
 
                                     Uang Diterima Bendahara
@@ -503,32 +500,28 @@
 
                                 <div class="relative">
 
-                                    <span class="absolute left-3 top-1/2
+                                    <span
+                                        class="absolute left-3 top-1/2
                                                  -translate-y-1/2
                                                  text-gray-500 font-medium">
                                         Rp
                                     </span>
 
-                                    <input
-                                        type="number"
-                                        name="uang_diterima"
-                                        id="uang_diterima"
-                                        value="{{ old('uang_diterima') }}"
-                                        min="0"
-                                        step="1"
-                                        required
+                                    <input type="number" name="uang_diterima" id="uang_diterima"
+                                        value="{{ old('uang_diterima') }}" min="0" step="1" required
                                         class="w-full pl-12 pr-4 py-3
-                                               rounded-lg border-gray-300
-                                               focus:border-blue-500
-                                               focus:ring-blue-500"
-                                        placeholder="Masukkan uang yang diterima"
-                                    >
-
+                                        rounded-lg border-gray-300
+                                        focus:border-blue-500
+                                        focus:ring-blue-500"
+                                        placeholder="Contoh: {{ $totalHouseholdsAktif * $pengajuanIuran->nominal_per_kk }}">
                                 </div>
 
                                 <p class="text-xs text-gray-500 mt-2">
                                     Masukkan angka tanpa titik atau simbol Rp.
-                                    Contoh: 300000
+                                    Nominal seharusnya ({{ $totalHouseholdsAktif }} KK × Rp
+                                    {{ number_format($pengajuanIuran->nominal_per_kk, 0, ',', '.') }}):
+                                    Rp
+                                    {{ number_format($totalHouseholdsAktif * $pengajuanIuran->nominal_per_kk, 0, ',', '.') }}
                                 </p>
 
                                 @error('uang_diterima')
@@ -541,15 +534,12 @@
 
 
                             {{-- Status Perbandingan --}}
-                            <div id="status-perbandingan"
-                                 class="hidden rounded-lg p-4 mb-5">
+                            <div id="status-perbandingan" class="hidden rounded-lg p-4 mb-5">
 
-                                <p id="status-text"
-                                   class="font-semibold">
+                                <p id="status-text" class="font-semibold">
                                 </p>
 
-                                <p id="status-detail"
-                                   class="text-sm mt-1">
+                                <p id="status-detail" class="text-sm mt-1">
                                 </p>
 
                             </div>
@@ -559,10 +549,8 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
                                 {{-- Tombol Setujui --}}
-                                <button type="submit"
-                                        id="btn-approve"
-                                        disabled
-                                        class="w-full px-5 py-3 rounded-lg
+                                <button type="submit" id="btn-approve" disabled
+                                    class="w-full px-5 py-3 rounded-lg
                                                bg-gray-400 text-white
                                                font-semibold cursor-not-allowed
                                                transition">
@@ -573,8 +561,8 @@
 
                                 {{-- Tombol Tolak --}}
                                 <button type="button"
-                                        onclick="document.getElementById('form-tolak').classList.toggle('hidden')"
-                                        class="w-full px-5 py-3 rounded-lg
+                                    onclick="document.getElementById('form-tolak').classList.toggle('hidden')"
+                                    class="w-full px-5 py-3 rounded-lg
                                                bg-red-600 text-white
                                                font-semibold hover:bg-red-700
                                                transition">
@@ -593,7 +581,7 @@
                         {{-- ================================================= --}}
 
                         <div id="form-tolak"
-                             class="hidden mt-5 rounded-lg
+                            class="hidden mt-5 rounded-lg
                                     bg-red-50 border border-red-200 p-5">
 
                             <h4 class="font-semibold text-red-800">
@@ -604,22 +592,15 @@
                                 Jelaskan alasan pengajuan ini ditolak.
                             </p>
 
-                            <form method="POST"
-                                  action="{{ route(
-                                      'verifikasi-iuran.reject',
-                                      $pengajuanIuran
-                                  ) }}">
+                            <form method="POST" action="{{ route('verifikasi-iuran.reject', $pengajuanIuran) }}">
 
                                 @csrf
 
-                                <textarea name="catatan"
-                                          rows="4"
-                                          required
-                                          maxlength="1000"
-                                          class="w-full rounded-lg border-gray-300
+                                <textarea name="catatan" rows="4" required maxlength="1000"
+                                    class="w-full rounded-lg border-gray-300
                                                  focus:border-red-500
                                                  focus:ring-red-500"
-                                          placeholder="Contoh: Jumlah uang yang diterima tidak sesuai dengan total iuran.">{{ old('catatan') }}</textarea>
+                                    placeholder="Contoh: Jumlah uang yang diterima tidak sesuai dengan total iuran.">{{ old('catatan') }}</textarea>
 
                                 @error('catatan')
                                     <p class="mt-2 text-sm text-red-600">
@@ -628,7 +609,7 @@
                                 @enderror
 
                                 <button type="submit"
-                                        class="mt-3 w-full px-5 py-3
+                                    class="mt-3 w-full px-5 py-3
                                                rounded-lg bg-red-600 text-white
                                                font-semibold hover:bg-red-700">
 
@@ -643,7 +624,6 @@
                     </div>
 
                 </div>
-
             @endif
 
 
@@ -654,7 +634,7 @@
             <div class="flex flex-col sm:flex-row gap-3">
 
                 <a href="{{ route('verifikasi-iuran.index') }}"
-                   class="inline-flex items-center justify-center
+                    class="inline-flex items-center justify-center
                           px-5 py-3 rounded-lg
                           bg-gray-200 text-gray-700
                           font-medium hover:bg-gray-300">
@@ -674,9 +654,8 @@
     {{-- ============================================================= --}}
 
     @if ($pengajuanIuran->status === 'Menunggu Verifikasi')
-
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function() {
 
                 const input = document.getElementById('uang_diterima');
                 const button = document.getElementById('btn-approve');
@@ -793,7 +772,6 @@
 
             });
         </script>
-
     @endif
 
 </x-app-layout>

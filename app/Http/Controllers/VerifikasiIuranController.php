@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Due;
+use App\Models\Household;
 use App\Models\PengajuanIuran;
 use App\Models\Transaction;
 use App\Models\TransactionCategory;
@@ -30,7 +31,16 @@ class VerifikasiIuranController extends Controller
             'details.household',
         ]);
 
-        return view('verifikasi-iuran.show', compact('pengajuanIuran'));
+        $totalHouseholdsAktif = Household::where('block_id', $pengajuanIuran->block_id)
+            ->where('is_active', true)
+            ->count();
+
+        $jumlahKKDiajukan = $pengajuanIuran->details->count();
+        $kkBelumBayar = $totalHouseholdsAktif - $jumlahKKDiajukan;
+
+        return view('verifikasi-iuran.show', compact(
+            'pengajuanIuran', 'totalHouseholdsAktif', 'kkBelumBayar'
+        ));
     }
 
     public function approve(Request $request, PengajuanIuran $pengajuanIuran)
@@ -126,8 +136,7 @@ class VerifikasiIuranController extends Controller
                         // PERBAIKAN TANGGAL
                         'payment_date' => $pengajuan->created_at,
 
-                        'notes' =>
-                            'Pembayaran melalui pengajuan iuran #' .
+                        'notes' => 'Pembayaran melalui pengajuan iuran #'.
                             $pengajuan->id,
                     ]
                 );
@@ -152,14 +161,13 @@ class VerifikasiIuranController extends Controller
                 'household_id' => null,
                 'due_id' => null,
                 'amount' => $pengajuan->total_iuran,
-                'description' =>
-                    'Penerimaan iuran Blok ' .
-                    $pengajuan->block->name .
-                    ' periode ' .
-                    $pengajuan->bulan .
-                    '/' .
-                    $pengajuan->tahun .
-                    ' - Pengajuan #' .
+                'description' => 'Penerimaan iuran Blok '.
+                    $pengajuan->block->name.
+                    ' periode '.
+                    $pengajuan->bulan.
+                    '/'.
+                    $pengajuan->tahun.
+                    ' - Pengajuan #'.
                     $pengajuan->id,
                 'proof_file' => $pengajuan->bukti,
                 'user_id' => auth()->id(),
@@ -208,8 +216,7 @@ class VerifikasiIuranController extends Controller
                 'max:1000',
             ],
         ], [
-            'catatan.required' =>
-                'Alasan penolakan wajib diisi.',
+            'catatan.required' => 'Alasan penolakan wajib diisi.',
         ]);
 
         /*

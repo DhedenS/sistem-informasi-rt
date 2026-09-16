@@ -1,252 +1,715 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Dashboard
-            </h2>
-            <p class="text-sm text-gray-500 mt-1">
-                Selamat datang di Sistem Informasi RT
-            </p>
-        </div>
-    </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- ========================================================= --}}
+    {{-- HEADER --}}
+    {{-- ========================================================= --}}
+    <div class="mb-5 sm:mb-6">
 
-            {{-- STATISTIK --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
+            Dashboard
+        </h1>
 
-                {{-- TOTAL KK --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">
-                                    Total KK
-                                </p>
-                                <p class="text-2xl font-semibold text-gray-800 mt-1">
-                                    {{ $totalKK }}
-                                </p>
-                                <p class="text-xs text-green-600 mt-1">
-                                    ↑ Data keluarga
-                                </p>
-                            </div>
+        <p class="mt-1 text-sm text-gray-500">
+            Selamat datang di Sistem Informasi RT
+        </p>
 
-                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-                                👨‍👩‍👧‍👦
-                            </div>
-                        </div>
-                    </div>
+    </div>
+
+
+    {{-- ========================================================= --}}
+    {{-- STATISTIK --}}
+    {{-- Mobile  : 1 kolom --}}
+    {{-- Tablet  : 2 kolom --}}
+    {{-- Desktop : 4 kolom --}}
+    {{-- ========================================================= --}}
+    <div
+        class="
+            mb-6
+            grid
+            grid-cols-1
+            gap-4
+            sm:grid-cols-2
+            xl:grid-cols-4
+        "
+    >
+
+        {{-- TOTAL KK --}}
+        <div
+            class="
+                min-w-0
+                rounded-2xl
+                border border-gray-200
+                bg-white
+                p-4
+                shadow-sm
+                sm:p-5
+            "
+        >
+
+            <div class="flex items-center justify-between gap-4">
+
+                <div class="min-w-0">
+
+                    <p class="text-sm font-medium text-gray-500">
+                        Total KK
+                    </p>
+
+                    <p
+                        class="
+                            mt-1
+                            text-2xl
+                            font-bold
+                            text-gray-900
+                            sm:text-3xl
+                        "
+                    >
+                        {{ $totalKK }}
+                    </p>
+
+                    <p
+                        class="
+                            mt-2
+                            text-xs
+                            font-medium
+                            text-green-600
+                        "
+                    >
+                        ↑ Data keluarga
+                    </p>
+
                 </div>
 
-                {{-- SURAT MASUK --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">
-                                    Surat Masuk
-                                </p>
-                                <p class="text-2xl font-semibold text-gray-800 mt-1">
-                                    {{ $totalSuratMasuk }}
-                                </p>
-                                <p class="text-xs text-blue-600 mt-1">
-                                    Surat diterima
-                                </p>
-                            </div>
 
-                            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
-                                📄
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- SALDO KAS --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">
-                                    Saldo Kas
-                                </p>
-                                <p class="text-2xl font-semibold text-gray-800 mt-1">
-                                    Rp {{ number_format($saldoKas, 0, ',', '.') }}
-                                </p>
-                                <p class="text-xs text-green-600 mt-1">
-                                    Saldo saat ini
-                                </p>
-                            </div>
-
-                            <div class="p-3 rounded-full bg-green-100 text-green-600">
-                                💰
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- TOTAL BLOK --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">
-                                    Total Blok
-                                </p>
-                                <p class="text-2xl font-semibold text-gray-800 mt-1">
-                                    {{ $totalBlok }}
-                                </p>
-                                <p class="text-xs text-gray-500 mt-1">
-                                    Blok terdaftar
-                                </p>
-                            </div>
-
-                            <div class="p-3 rounded-full bg-orange-100 text-orange-600">
-                                🏘️
-                            </div>
-                        </div>
-                    </div>
+                <div
+                    class="
+                        flex
+                        h-12
+                        w-12
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-xl
+                        bg-blue-100
+                        text-2xl
+                    "
+                >
+                    👨‍👩‍👧‍👦
                 </div>
 
             </div>
 
+        </div>
 
-            {{-- BAGIAN BAWAH --}}
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                {{-- GRAFIK CASHFLOW --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
+        {{-- SURAT MASUK --}}
+        <div
+            class="
+                min-w-0
+                rounded-2xl
+                border border-gray-200
+                bg-white
+                p-4
+                shadow-sm
+                sm:p-5
+            "
+        >
 
-                        <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800">
-                                    Grafik Cashflow
-                                </h3>
+            <div class="flex items-center justify-between gap-4">
 
-                                <p class="text-sm text-gray-500 mt-1">
-                                    Pemasukan dan pengeluaran kas
-                                </p>
-                            </div>
+                <div class="min-w-0">
 
-                            <button
-                                type="button"
-                                class="px-3 py-1.5 text-sm font-medium
-                                       text-gray-600 border border-gray-300
-                                       rounded-lg hover:bg-gray-50">
-                                6 Bulan
-                            </button>
+                    <p class="text-sm font-medium text-gray-500">
+                        Surat Masuk
+                    </p>
+
+                    <p
+                        class="
+                            mt-1
+                            text-2xl
+                            font-bold
+                            text-gray-900
+                            sm:text-3xl
+                        "
+                    >
+                        {{ $totalSuratMasuk }}
+                    </p>
+
+                    <p
+                        class="
+                            mt-2
+                            text-xs
+                            font-medium
+                            text-blue-600
+                        "
+                    >
+                        Surat diterima
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="
+                        flex
+                        h-12
+                        w-12
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-xl
+                        bg-purple-100
+                        text-2xl
+                    "
+                >
+                    📄
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- SALDO KAS --}}
+        <div
+            class="
+                min-w-0
+                rounded-2xl
+                border border-gray-200
+                bg-white
+                p-4
+                shadow-sm
+                sm:p-5
+            "
+        >
+
+            <div class="flex items-center justify-between gap-4">
+
+                <div class="min-w-0">
+
+                    <p class="text-sm font-medium text-gray-500">
+                        Saldo Kas
+                    </p>
+
+                    <p
+                        class="
+                            mt-1
+                            break-words
+                            text-xl
+                            font-bold
+                            text-gray-900
+                            sm:text-2xl
+                        "
+                    >
+                        Rp {{ number_format($saldoKas, 0, ',', '.') }}
+                    </p>
+
+                    <p
+                        class="
+                            mt-2
+                            text-xs
+                            font-medium
+                            text-green-600
+                        "
+                    >
+                        Saldo saat ini
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="
+                        flex
+                        h-12
+                        w-12
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-xl
+                        bg-green-100
+                        text-2xl
+                    "
+                >
+                    💰
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- TOTAL BLOK --}}
+        <div
+            class="
+                min-w-0
+                rounded-2xl
+                border border-gray-200
+                bg-white
+                p-4
+                shadow-sm
+                sm:p-5
+            "
+        >
+
+            <div class="flex items-center justify-between gap-4">
+
+                <div class="min-w-0">
+
+                    <p class="text-sm font-medium text-gray-500">
+                        Total Blok
+                    </p>
+
+                    <p
+                        class="
+                            mt-1
+                            text-2xl
+                            font-bold
+                            text-gray-900
+                            sm:text-3xl
+                        "
+                    >
+                        {{ $totalBlok }}
+                    </p>
+
+                    <p class="mt-2 text-xs text-gray-500">
+                        Blok terdaftar
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="
+                        flex
+                        h-12
+                        w-12
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-xl
+                        bg-orange-100
+                        text-2xl
+                    "
+                >
+                    🏘️
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- ========================================================= --}}
+    {{-- BAGIAN BAWAH --}}
+    {{-- Mobile  : 1 kolom --}}
+    {{-- Desktop : grafik + aktivitas --}}
+    {{-- ========================================================= --}}
+    <div
+        class="
+            grid
+            grid-cols-1
+            gap-4
+            lg:grid-cols-2
+            lg:gap-6
+        "
+    >
+
+        {{-- ===================================================== --}}
+        {{-- GRAFIK CASHFLOW --}}
+        {{-- ===================================================== --}}
+        <div
+            class="
+                min-w-0
+                overflow-hidden
+                rounded-2xl
+                border border-gray-200
+                bg-white
+                shadow-sm
+            "
+        >
+
+            <div class="p-4 sm:p-6">
+
+                {{-- HEADER GRAFIK --}}
+                <div
+                    class="
+                        mb-6
+                        flex
+                        flex-col
+                        gap-3
+                        sm:flex-row
+                        sm:items-center
+                        sm:justify-between
+                    "
+                >
+
+                    <div class="min-w-0">
+
+                        <h2
+                            class="
+                                text-lg
+                                font-bold
+                                text-gray-900
+                            "
+                        >
+                            Grafik Cashflow
+                        </h2>
+
+                        <p class="mt-1 text-sm text-gray-500">
+                            Pemasukan dan pengeluaran kas
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="
+                            inline-flex
+                            min-h-11
+                            w-full
+                            items-center
+                            justify-center
+                            rounded-xl
+                            border border-gray-300
+                            bg-white
+                            px-4
+                            py-2
+                            text-sm
+                            font-medium
+                            text-gray-600
+                            transition
+                            hover:bg-gray-50
+                            sm:w-auto
+                        "
+                    >
+                        6 Bulan
+                    </button>
+
+                </div>
+
+
+                {{-- GRAFIK --}}
+                <div
+                    class="
+                        flex
+                        h-60
+                        w-full
+                        min-w-0
+                        items-end
+                        justify-between
+                        gap-2
+                        border-b
+                        border-gray-200
+                        px-1
+                        sm:h-64
+                        sm:gap-4
+                        sm:px-2
+                    "
+                >
+
+                    @foreach ($cashflowData as $item)
+
+                        @php
+                            $tinggiMasuk =
+                                ($maxValue ?? 0) > 0 && $item['masuk'] > 0
+                                    ? max(($item['masuk'] / $maxValue) * 100, 4)
+                                    : 0;
+                        @endphp
+
+
+                        <div
+                            class="
+                                flex
+                                h-full
+                                min-w-0
+                                flex-1
+                                flex-col
+                                items-center
+                                justify-end
+                            "
+                        >
+
+                            {{-- BAR --}}
+                            <div
+                                class="
+                                    w-full
+                                    max-w-12
+                                    rounded-t-md
+                                    bg-blue-500
+                                    transition-all
+                                "
+                                style="height: {{ $tinggiMasuk }}%;"
+                                title="Rp {{ number_format($item['masuk'], 0, ',', '.') }}"
+                            ></div>
+
+
+                            {{-- BULAN --}}
+                            <span
+                                class="
+                                    mt-2
+                                    block
+                                    w-full
+                                    truncate
+                                    text-center
+                                    text-[10px]
+                                    text-gray-500
+                                    sm:text-xs
+                                "
+                            >
+                                {{ $item['label'] }}
+                            </span>
+
                         </div>
 
-                        <div class="flex items-end justify-between h-64 space-x-4">
+                    @endforeach
 
-                            @foreach ($cashflowData as $item)
+                </div>
 
-                                @php
-                                    $tinggiMasuk = $item['masuk'] > 0
-                                        ? max(($item['masuk'] / $maxValue) * 100, 4)
-                                        : 0;
-                                @endphp
+            </div>
 
-                                <div class="flex flex-col items-center flex-1 h-full justify-end">
+        </div>
 
-                                    <div
-                                        class="w-full bg-blue-500 rounded-t"
-                                        style="height: {{ $tinggiMasuk }}%;"
-                                        title="Rp {{ number_format($item['masuk'], 0, ',', '.') }}">
-                                    </div>
 
-                                    <span class="text-xs text-gray-500 mt-2">
-                                        {{ $item['label'] }}
+        {{-- ===================================================== --}}
+        {{-- AKTIVITAS TERBARU --}}
+        {{-- ===================================================== --}}
+        <div
+            class="
+                min-w-0
+                overflow-hidden
+                rounded-2xl
+                border border-gray-200
+                bg-white
+                shadow-sm
+            "
+        >
+
+            <div class="p-4 sm:p-6">
+
+
+                {{-- HEADER AKTIVITAS --}}
+                <div
+                    class="
+                        mb-5
+                        flex
+                        items-start
+                        justify-between
+                        gap-3
+                    "
+                >
+
+                    <div class="min-w-0">
+
+                        <h2
+                            class="
+                                text-lg
+                                font-bold
+                                text-gray-900
+                            "
+                        >
+                            Aktivitas Terbaru
+                        </h2>
+
+                        <p class="mt-1 text-sm text-gray-500">
+                            Aktivitas sistem terbaru
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="{{ route('riwayat-transaksi.index') }}"
+                        class="
+                            shrink-0
+                            whitespace-nowrap
+                            text-sm
+                            font-semibold
+                            text-blue-600
+                            hover:text-blue-700
+                        "
+                    >
+                        Lihat Semua →
+                    </a>
+
+                </div>
+
+
+                {{-- DAFTAR --}}
+                <div class="space-y-3">
+
+                    @forelse ($transaksiTerbaru as $trx)
+
+                        <div
+                            class="
+                                flex
+                                min-w-0
+                                items-start
+                                gap-3
+                                rounded-xl
+                                border
+                                border-gray-100
+                                p-3
+                            "
+                        >
+
+                            {{-- ICON --}}
+                            <div
+                                class="
+                                    flex
+                                    h-10
+                                    w-10
+                                    shrink-0
+                                    items-center
+                                    justify-center
+                                    rounded-full
+
+                                    {{ $trx->type === 'masuk'
+                                        ? 'bg-green-100'
+                                        : 'bg-red-100'
+                                    }}
+                                "
+                            >
+                                {{ $trx->type === 'masuk' ? '📥' : '📤' }}
+                            </div>
+
+
+                            {{-- CONTENT --}}
+                            <div class="min-w-0 flex-1">
+
+                                <div
+                                    class="
+                                        flex
+                                        flex-col
+                                        gap-1
+                                        sm:flex-row
+                                        sm:items-center
+                                        sm:justify-between
+                                    "
+                                >
+
+                                    <p
+                                        class="
+                                            min-w-0
+                                            text-sm
+                                            font-semibold
+                                            text-gray-800
+                                        "
+                                    >
+                                        {{ $trx->type === 'masuk'
+                                            ? 'Pemasukan'
+                                            : 'Pengeluaran'
+                                        }}
+                                    </p>
+
+
+                                    <span
+                                        class="
+                                            shrink-0
+                                            text-xs
+                                            text-gray-400
+                                        "
+                                    >
+                                        {{ $trx->created_at->diffForHumans() }}
                                     </span>
 
                                 </div>
 
-                            @endforeach
 
-                        </div>
-                    </div>
-                </div>
+                                <p
+                                    class="
+                                        mt-1
+                                        break-words
+                                        text-sm
+                                        font-medium
 
+                                        {{ $trx->type === 'masuk'
+                                            ? 'text-green-600'
+                                            : 'text-red-600'
+                                        }}
+                                    "
+                                >
+                                    {{ $trx->type === 'masuk' ? '+' : '-' }}
 
-                {{-- AKTIVITAS TERBARU --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-
-                        {{-- HEADER AKTIVITAS + LIHAT SEMUA --}}
-                        <div class="flex items-center justify-between mb-6">
-
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800">
-                                    Aktivitas Terbaru
-                                </h3>
-
-                                <p class="text-sm text-gray-500 mt-1">
-                                    Aktivitas sistem terbaru
+                                    Rp {{ number_format($trx->amount, 0, ',', '.') }}
                                 </p>
+
+
+                                @if (!empty($trx->description))
+
+                                    <p
+                                        class="
+                                            mt-1
+                                            break-words
+                                            text-xs
+                                            text-gray-500
+                                        "
+                                    >
+                                        {{ $trx->description }}
+                                    </p>
+
+                                @endif
+
                             </div>
 
-                            {{-- LIHAT SEMUA --}}
-                            <a
-                                href="{{ route('riwayat-transaksi.index') }}"
-                                class="text-sm font-medium text-blue-600 hover:text-blue-700 whitespace-nowrap"
+                        </div>
+
+                    @empty
+
+                        {{-- EMPTY STATE --}}
+                        <div
+                            class="
+                                flex
+                                min-h-40
+                                flex-col
+                                items-center
+                                justify-center
+                                rounded-xl
+                                border
+                                border-dashed
+                                border-gray-300
+                                bg-gray-50
+                                px-4
+                                text-center
+                            "
+                        >
+
+                            <div class="mb-2 text-3xl">
+                                💰
+                            </div>
+
+                            <p
+                                class="
+                                    text-sm
+                                    font-medium
+                                    text-gray-600
+                                "
                             >
-                                Lihat Semua →
-                            </a>
+                                Belum ada transaksi
+                            </p>
+
+                            <p
+                                class="
+                                    mt-1
+                                    text-xs
+                                    text-gray-400
+                                "
+                            >
+                                Aktivitas transaksi terbaru akan muncul di sini.
+                            </p>
 
                         </div>
 
+                    @endforelse
 
-                        {{-- DAFTAR TRANSAKSI --}}
-                        <div class="space-y-5">
-
-                            @forelse ($transaksiTerbaru as $trx)
-
-                                <div class="flex items-start">
-
-                                    <div class="flex-shrink-0">
-                                        <div
-                                            class="w-10 h-10 rounded-full
-                                            {{ $trx->type === 'masuk'
-                                                ? 'bg-green-100'
-                                                : 'bg-red-100' }}
-                                            flex items-center justify-center">
-                                            💰
-                                        </div>
-                                    </div>
-
-                                    <div class="ml-4">
-
-                                        <p class="text-sm font-medium text-gray-800">
-                                            {{ $trx->type === 'masuk'
-                                                ? 'Pemasukan'
-                                                : 'Pengeluaran' }}:
-                                            Rp {{ number_format($trx->amount, 0, ',', '.') }}
-                                        </p>
-
-                                        <p class="text-xs text-gray-500">
-                                            {{ $trx->created_at->diffForHumans() }}
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            @empty
-
-                                <p class="text-sm text-gray-500">
-                                    Belum ada transaksi tercatat.
-                                </p>
-
-                            @endforelse
-
-                        </div>
-
-                    </div>
                 </div>
 
             </div>
 
         </div>
+
     </div>
+
 </x-app-layout>
