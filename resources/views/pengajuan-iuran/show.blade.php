@@ -38,23 +38,20 @@
                     <div>
 
                         @if ($pengajuanIuran->status === 'Menunggu Verifikasi')
-
-                            <span class="inline-flex rounded-full bg-yellow-100 px-4 py-2 text-sm font-semibold text-yellow-800">
+                            <span
+                                class="inline-flex rounded-full bg-yellow-100 px-4 py-2 text-sm font-semibold text-yellow-800">
                                 Menunggu Verifikasi
                             </span>
-
                         @elseif ($pengajuanIuran->status === 'Disetujui')
-
-                            <span class="inline-flex rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-800">
+                            <span
+                                class="inline-flex rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-800">
                                 Disetujui
                             </span>
-
                         @elseif ($pengajuanIuran->status === 'Ditolak')
-
-                            <span class="inline-flex rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-800">
+                            <span
+                                class="inline-flex rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-800">
                                 Ditolak
                             </span>
-
                         @endif
 
                     </div>
@@ -153,7 +150,6 @@
                 <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
 
                     @foreach ($pengajuanIuran->details as $detail)
-
                         <div class="rounded-lg border border-gray-200 p-4">
 
                             <p class="font-semibold text-gray-900">
@@ -165,39 +161,75 @@
                             </p>
 
                         </div>
-
                     @endforeach
 
                 </div>
 
             </div>
 
+            {{-- KK Belum Bayar --}}
+            @if ($householdsBelumBayar->count() > 0)
+
+                <div class="mb-6 rounded-xl bg-yellow-50 p-5 ring-1 ring-yellow-200">
+
+                    <div class="flex items-center justify-between">
+
+                        <div>
+
+                            <h2 class="text-lg font-semibold text-yellow-900">
+                                ⚠ KK yang Belum Membayar
+                            </h2>
+
+                            <p class="mt-1 text-sm text-yellow-700">
+                                {{ $householdsBelumBayar->count() }} KK belum tercatat membayar iuran periode ini.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+
+                        @foreach ($householdsBelumBayar as $household)
+                            <div class="rounded-lg border border-yellow-300 bg-white p-4">
+
+                                <p class="font-semibold text-gray-900">
+                                    {{ $household->household_number }}
+                                </p>
+
+                                <p class="mt-1 text-sm text-gray-500">
+                                    {{ $household->head_name }}
+                                </p>
+
+                            </div>
+                        @endforeach
+
+                    </div>
+
+                </div>
+
+            @endif
 
             {{-- Bukti --}}
             @if ($pengajuanIuran->bukti)
-
                 <div class="mb-6 rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
 
                     <h2 class="text-lg font-semibold text-gray-900">
                         Bukti Pembayaran
                     </h2>
 
-                    <a
-                        href="{{ asset('storage/' . $pengajuanIuran->bukti) }}"
-                        target="_blank"
-                        class="mt-4 inline-flex rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
-                    >
+                    <a href="{{ asset('storage/' . $pengajuanIuran->bukti) }}" target="_blank"
+                        class="mt-4 inline-flex rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700">
                         Lihat Bukti
                     </a>
 
                 </div>
-
             @endif
 
 
             {{-- Catatan --}}
             @if ($pengajuanIuran->catatan)
-
                 <div class="mb-6 rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
 
                     <h2 class="text-lg font-semibold text-gray-900">
@@ -209,7 +241,6 @@
                     </p>
 
                 </div>
-
             @endif
 
 
@@ -230,12 +261,10 @@
                     </p>
 
                     @if ($pengajuanIuran->diverifikasi_pada)
-
                         <p class="mt-1 text-sm text-gray-600">
                             Waktu:
                             {{ $pengajuanIuran->diverifikasi_pada->format('d-m-Y H:i') }}
                         </p>
-
                     @endif
 
                 </div>
@@ -246,10 +275,8 @@
             {{-- Tombol kembali --}}
             <div>
 
-                <a
-                    href="{{ route('pengajuan-iuran.index') }}"
-                    class="inline-flex rounded-lg bg-gray-100 px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-200"
-                >
+                <a href="{{ route('pengajuan-iuran.index') }}"
+                    class="inline-flex rounded-lg bg-gray-100 px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-200">
                     ← Kembali
                 </a>
 

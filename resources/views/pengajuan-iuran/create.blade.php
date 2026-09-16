@@ -48,12 +48,8 @@
             </div>
 
 
-            <form
-                action="{{ route('pengajuan-iuran.store') }}"
-                method="POST"
-                enctype="multipart/form-data"
-                id="pengajuanForm"
-            >
+            <form action="{{ route('pengajuan-iuran.store') }}" method="POST" enctype="multipart/form-data"
+                id="pengajuanForm">
 
                 @csrf
 
@@ -69,33 +65,22 @@
 
                         <div>
 
-                            <label
-                                for="bulan"
-                                class="block text-sm font-medium text-gray-700"
-                            >
+                            <label for="bulan" class="block text-sm font-medium text-gray-700">
                                 Bulan
                             </label>
 
-                            <select
-                                name="bulan"
-                                id="bulan"
-                                required
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            >
+                            <select name="bulan" id="bulan" required
+                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
 
                                 @php
                                     $bulanSekarang = now()->month;
                                 @endphp
 
                                 @for ($i = 1; $i <= 12; $i++)
-
-                                    <option
-                                        value="{{ $i }}"
-                                        {{ old('bulan', $bulanSekarang) == $i ? 'selected' : '' }}
-                                    >
+                                    <option value="{{ $i }}"
+                                        {{ old('bulan', $bulanSekarang) == $i ? 'selected' : '' }}>
                                         {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
                                     </option>
-
                                 @endfor
 
                             </select>
@@ -105,29 +90,18 @@
 
                         <div>
 
-                            <label
-                                for="tahun"
-                                class="block text-sm font-medium text-gray-700"
-                            >
+                            <label for="tahun" class="block text-sm font-medium text-gray-700">
                                 Tahun
                             </label>
 
-                            <select
-                                name="tahun"
-                                id="tahun"
-                                required
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            >
+                            <select name="tahun" id="tahun" required
+                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
 
                                 @for ($tahun = now()->year - 1; $tahun <= now()->year + 1; $tahun++)
-
-                                    <option
-                                        value="{{ $tahun }}"
-                                        {{ old('tahun', now()->year) == $tahun ? 'selected' : '' }}
-                                    >
+                                    <option value="{{ $tahun }}"
+                                        {{ old('tahun', now()->year) == $tahun ? 'selected' : '' }}>
                                         {{ $tahun }}
                                     </option>
-
                                 @endfor
 
                             </select>
@@ -175,11 +149,8 @@
                         </div>
 
 
-                        <button
-                            type="button"
-                            id="selectAll"
-                            class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200"
-                        >
+                        <button type="button" id="selectAll"
+                            class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200">
                             Pilih Semua
                         </button>
 
@@ -189,18 +160,12 @@
                     <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 
                         @foreach ($households as $household)
-
                             <label
-                                class="household-card flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-4 transition hover:bg-gray-50"
-                            >
+                                class="household-card flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-4 transition hover:bg-gray-50">
 
-                                <input
-                                    type="checkbox"
-                                    name="household_ids[]"
-                                    value="{{ $household->id }}"
+                                <input type="checkbox" name="household_ids[]" value="{{ $household->id }}"
                                     class="household-checkbox h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    {{ in_array($household->id, old('household_ids', [])) ? 'checked' : '' }}
-                                >
+                                    {{ in_array($household->id, old('household_ids', [])) ? 'checked' : '' }}>
 
                                 <div class="min-w-0">
 
@@ -215,7 +180,6 @@
                                 </div>
 
                             </label>
-
                         @endforeach
 
                     </div>
@@ -238,10 +202,7 @@
                                 Jumlah KK
                             </p>
 
-                            <p
-                                id="jumlahKK"
-                                class="mt-1 text-2xl font-bold text-gray-900"
-                            >
+                            <p id="jumlahKK" class="mt-1 text-2xl font-bold text-gray-900">
                                 0 KK
                             </p>
 
@@ -254,13 +215,19 @@
                                 Total Iuran
                             </p>
 
-                            <p
-                                id="totalIuran"
-                                class="mt-1 text-2xl font-bold text-green-800"
-                            >
+                            <p id="totalIuran" class="mt-1 text-2xl font-bold text-green-800">
                                 Rp 0
                             </p>
 
+                        </div>
+
+                        <div class="rounded-lg bg-yellow-50 p-4">
+                            <p class="text-sm text-yellow-700">
+                                KK Belum Bayar
+                            </p>
+                            <p id="belumBayar" class="mt-1 text-2xl font-bold text-yellow-800">
+                                {{ $totalHouseholds }} KK
+                            </p>
                         </div>
 
                     </div>
@@ -279,12 +246,8 @@
                         Upload bukti jika diperlukan. Format JPG, JPEG, PNG, atau PDF. Maksimal 5 MB.
                     </p>
 
-                    <input
-                        type="file"
-                        name="bukti"
-                        accept=".jpg,.jpeg,.png,.pdf"
-                        class="mt-4 block w-full rounded-lg border border-gray-300 p-2 text-sm"
-                    >
+                    <input type="file" name="bukti" accept=".jpg,.jpeg,.png,.pdf"
+                        class="mt-4 block w-full rounded-lg border border-gray-300 p-2 text-sm">
 
                 </div>
 
@@ -292,20 +255,12 @@
                 {{-- Catatan --}}
                 <div class="mb-6 rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
 
-                    <label
-                        for="catatan"
-                        class="block text-sm font-medium text-gray-700"
-                    >
+                    <label for="catatan" class="block text-sm font-medium text-gray-700">
                         Catatan
                     </label>
 
-                    <textarea
-                        name="catatan"
-                        id="catatan"
-                        rows="4"
-                        placeholder="Tambahkan catatan jika diperlukan..."
-                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    >{{ old('catatan') }}</textarea>
+                    <textarea name="catatan" id="catatan" rows="4" placeholder="Tambahkan catatan jika diperlukan..."
+                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('catatan') }}</textarea>
 
                 </div>
 
@@ -313,17 +268,13 @@
                 {{-- Tombol --}}
                 <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
 
-                    <a
-                        href="{{ route('pengajuan-iuran.index') }}"
-                        class="rounded-lg bg-gray-100 px-5 py-3 text-center text-sm font-semibold text-gray-700 hover:bg-gray-200"
-                    >
+                    <a href="{{ route('pengajuan-iuran.index') }}"
+                        class="rounded-lg bg-gray-100 px-5 py-3 text-center text-sm font-semibold text-gray-700 hover:bg-gray-200">
                         Batal
                     </a>
 
-                    <button
-                        type="submit"
-                        class="rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
-                    >
+                    <button type="submit"
+                        class="rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
                         Kirim Pengajuan
                     </button>
 
@@ -338,7 +289,6 @@
 
     {{-- JavaScript hitung total --}}
     <script>
-
         const nominalPerKK = {{ $nominalPerKK }};
 
         const checkboxes = document.querySelectorAll('.household-checkbox');
@@ -349,6 +299,9 @@
 
         const selectAllButton = document.getElementById('selectAll');
 
+        const totalHouseholds = {{ $totalHouseholds }};
+
+        const belumBayarElement = document.getElementById('belumBayar');
 
         function formatRupiah(angka) {
 
@@ -358,38 +311,32 @@
 
 
         function updateTotal() {
-
-            const selected = document.querySelectorAll(
-                '.household-checkbox:checked'
-            );
-
+            const selected = document.querySelectorAll('.household-checkbox:checked');
             const jumlah = selected.length;
-
             const total = jumlah * nominalPerKK;
+            const belumBayar = totalHouseholds - jumlah;
 
             jumlahKKElement.textContent = jumlah + ' KK';
-
-            totalIuranElement.textContent =
-                'Rp ' + formatRupiah(total);
-
+            totalIuranElement.textContent = 'Rp ' + formatRupiah(total);
+            belumBayarElement.textContent = belumBayar + ' KK';
         }
 
 
-        checkboxes.forEach(function (checkbox) {
+        checkboxes.forEach(function(checkbox) {
 
             checkbox.addEventListener('change', updateTotal);
 
         });
 
 
-        selectAllButton.addEventListener('click', function () {
+        selectAllButton.addEventListener('click', function() {
 
             const allChecked =
                 document.querySelectorAll(
                     '.household-checkbox:checked'
                 ).length === checkboxes.length;
 
-            checkboxes.forEach(function (checkbox) {
+            checkboxes.forEach(function(checkbox) {
 
                 checkbox.checked = !allChecked;
 
@@ -401,7 +348,6 @@
 
 
         updateTotal();
-
     </script>
 
 </x-app-layout>
