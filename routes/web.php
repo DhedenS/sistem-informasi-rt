@@ -13,7 +13,8 @@ use App\Http\Controllers\CashflowReportController;
 use App\Http\Controllers\PengajuanIuranController;
 use App\Http\Controllers\VerifikasiIuranController;
 use App\Http\Controllers\IuranSayaController;
-
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RiwayatTransaksiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,9 +33,23 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
+
+    /* 
+|--------------------------------------------------------------------------
+| Riwayat Transaksi
+|--------------------------------------------------------------------------
+| Semua user yang sudah login dapat melihat riwayat transaksi
+| secara read-only.
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/riwayat-transaksi', [RiwayatTransaksiController::class, 'index'])
+    ->middleware('auth')
+    ->name('riwayat-transaksi.index');
 
 
 /*

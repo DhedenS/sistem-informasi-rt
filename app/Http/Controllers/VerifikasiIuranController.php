@@ -36,7 +36,7 @@ class VerifikasiIuranController extends Controller
     public function approve(Request $request, PengajuanIuran $pengajuanIuran)
     {
         /*
-         * Validasi input uang yang benar-benar diterima.
+         * Validasi uang yang benar-benar diterima Bendahara.
          */
         $request->validate([
             'uang_diterima' => [
@@ -51,8 +51,8 @@ class VerifikasiIuranController extends Controller
         ]);
 
         /*
-         * Ambil nilai dalam satuan sen/rupiah tanpa desimal
-         * untuk perbandingan yang lebih aman.
+         * Bandingkan uang diterima dengan total iuran
+         * secara aman tanpa masalah desimal.
          */
         $uangDiterima = (int) round(
             ((float) $request->uang_diterima) * 100
@@ -63,7 +63,7 @@ class VerifikasiIuranController extends Controller
         );
 
         /*
-         * Uang diterima HARUS sama dengan total iuran.
+         * Uang diterima harus sama dengan total iuran.
          */
         if ($uangDiterima !== $totalIuran) {
             return back()
@@ -79,8 +79,8 @@ class VerifikasiIuranController extends Controller
             $request
         ) {
             /*
-             * Lock data pengajuan agar tidak bisa diproses
-             * bersamaan oleh dua request.
+             * Lock pengajuan agar tidak diproses
+             * secara bersamaan.
              */
             $pengajuan = PengajuanIuran::where(
                 'id',
@@ -106,8 +106,10 @@ class VerifikasiIuranController extends Controller
             ]);
 
             /*
-             * Tandai semua KK yang terdapat dalam pengajuan
-             * sebagai sudah lunas.
+             * Tandai semua KK dalam pengajuan sebagai Lunas.
+             *
+             * Tanggal pembayaran menggunakan created_at pengajuan,
+             * bukan tanggal approval Bendahara.
              */
             foreach ($pengajuan->details as $detail) {
                 Due::updateOrCreate(
@@ -120,7 +122,10 @@ class VerifikasiIuranController extends Controller
                         'amount' => $pengajuan->nominal_per_kk,
                         'paid_amount' => $pengajuan->nominal_per_kk,
                         'status' => 'Lunas',
-                        'payment_date' => now(),
+
+                        // PERBAIKAN TANGGAL
+                        'payment_date' => $pengajuan->created_at,
+
                         'notes' =>
                             'Pembayaran melalui pengajuan iuran #' .
                             $pengajuan->id,
@@ -161,8 +166,7 @@ class VerifikasiIuranController extends Controller
             ]);
 
             /*
-             * Simpan uang yang benar-benar diterima
-             * dan ubah status menjadi Disetujui.
+             * Simpan hasil verifikasi.
              */
             $pengajuan->update([
                 'uang_diterima' => $request->uang_diterima,
@@ -184,6 +188,9 @@ class VerifikasiIuranController extends Controller
         Request $request,
         PengajuanIuran $pengajuanIuran
     ) {
+        /*
+         * Pastikan pengajuan masih menunggu verifikasi.
+         */
         if ($pengajuanIuran->status !== 'Menunggu Verifikasi') {
             return back()->with(
                 'error',
@@ -191,6 +198,9 @@ class VerifikasiIuranController extends Controller
             );
         }
 
+        /*
+         * Alasan penolakan wajib diisi.
+         */
         $request->validate([
             'catatan' => [
                 'required',
@@ -202,6 +212,9 @@ class VerifikasiIuranController extends Controller
                 'Alasan penolakan wajib diisi.',
         ]);
 
+        /*
+         * Simpan hasil penolakan.
+         */
         $pengajuanIuran->update([
             'status' => 'Ditolak',
             'catatan' => $request->catatan,
