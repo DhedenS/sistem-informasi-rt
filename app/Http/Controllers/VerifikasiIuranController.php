@@ -16,6 +16,7 @@ class VerifikasiIuranController extends Controller
     {
         $pengajuan = PengajuanIuran::with(['block', 'user'])
             ->withCount('details')
+            ->where('status', 'Menunggu Verifikasi')
             ->latest()
             ->paginate(10);
 

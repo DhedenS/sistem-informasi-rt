@@ -14,37 +14,106 @@ class DueController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Due::with(['household.block', 'transaction']);
+        if ($request->filled('block_id') || $request->filled('household_id')) {
+            $query = Due::with(['household.block', 'transaction']);
 
-        if ($request->filled('household_id')) {
-            $query->where('household_id', $request->household_id);
+            if ($request->filled('household_id')) {
+                $query->where('household_id', $request->household_id);
+            }
+            if ($request->filled('block_id')) {
+                $query->whereHas('household', fn ($q) => $q->where('block_id', $request->block_id));
+            }
+            if ($request->filled('month')) {
+                $query->where('month', $request->month);
+            }
+            if ($request->filled('year')) {
+                $query->where('year', $request->year);
+            }
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            $dues = $query->orderBy('year', 'desc')->orderBy('month', 'desc')->paginate(50)->withQueryString();
+            $households = Household::where('is_active', true)
+                ->when($request->filled('block_id'), fn ($q) => $q->where('block_id', $request->block_id))
+                ->with('block')
+                ->get();
+
+            $month = $request->filled('month') ? $request->input('month') : now()->month;
+            $year = $request->filled('year') ? $request->input('year') : now()->year;
+
+            // Tambahkan ini:
+            $summary = DB::table('blocks')
+                ->leftJoin('households', 'households.block_id', '=', 'blocks.id')
+                ->leftJoin('dues', function ($join) use ($month, $year) {
+                    $join->on('dues.household_id', '=', 'households.id')
+                        ->where('dues.month', $month)
+                        ->where('dues.year', $year);
+                })
+                ->select(
+                    'blocks.id',
+                    'blocks.name',
+                    DB::raw('COUNT(DISTINCT households.id) as total_kk'),
+                    DB::raw('SUM(CASE WHEN dues.status = "Lunas" THEN 1 ELSE 0 END) as lunas'),
+                    DB::raw('SUM(CASE WHEN dues.status = "Belum Lunas" THEN 1 ELSE 0 END) as belum_lunas'),
+                    DB::raw('SUM(CASE WHEN dues.status = "Lunas" THEN dues.amount ELSE 0 END) as total_terkumpul')
+                )
+                ->groupBy('blocks.id', 'blocks.name')
+                ->orderBy('blocks.name')
+                ->get();
+
+            return view('cashflow.dues.detail', compact('dues', 'households', 'month', 'year', 'summary'));
         }
 
-        if ($request->filled('month')) {
-            $query->where('month', $request->month);
+        // Default: ringkasan per blok
+        $month = $request->input('month', now()->month);
+        $year = $request->input('year', now()->year);
+
+        $summaryQuery = DB::table('blocks')
+            ->leftJoin('households', 'households.block_id', '=', 'blocks.id')
+            ->leftJoin('dues', function ($join) use ($month, $year) {
+                $join->on('dues.household_id', '=', 'households.id')
+                    ->where('dues.month', $month)
+                    ->where('dues.year', $year);
+            })
+            ->select(
+                'blocks.id',
+                'blocks.name',
+                DB::raw('COUNT(DISTINCT households.id) as total_kk'),
+                DB::raw('SUM(CASE WHEN dues.status = "Lunas" THEN 1 ELSE 0 END) as lunas'),
+                DB::raw('SUM(CASE WHEN dues.status = "Belum Lunas" THEN 1 ELSE 0 END) as belum_lunas'),
+                DB::raw('SUM(CASE WHEN dues.status = "Lunas" THEN dues.amount ELSE 0 END) as total_terkumpul')
+            )
+            ->groupBy('blocks.id', 'blocks.name');
+
+        // TAMBAHKAN INI
+        if ($request->filled('filter_block')) {
+            $summaryQuery->where('blocks.id', $request->filter_block);
         }
 
-        if ($request->filled('year')) {
-            $query->where('year', $request->year);
-        }
+        $summary = $summaryQuery->orderBy('blocks.name')->get();
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        $dues = $query->orderBy('year', 'desc')
-            ->orderBy('month', 'desc')
-            ->paginate(15)
-            ->withQueryString();
+        // TAMBAHKAN INI
+        $blocks = DB::table('blocks')->orderBy('name')->get();
 
         $households = Household::where('is_active', true)->with('block')->get();
 
-        return view('cashflow.dues.index', compact('dues', 'households'));
+        $dues = Due::with(['household.block'])
+            ->where('month', $month)
+            ->where('year', $year)
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->paginate(50)
+            ->withQueryString();
+
+        // GANTI baris return-nya, tambahkan 'blocks'
+        return view('cashflow.dues.index', compact('summary', 'month', 'year', 'households', 'dues', 'blocks'));
     }
 
     public function create()
     {
         $households = Household::where('is_active', true)->with('block')->get();
+
         return view('cashflow.dues.create', compact('households'));
     }
 
@@ -59,8 +128,8 @@ class DueController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        $month = (int)$request->month;
-        $year = (int)$request->year;
+        $month = (int) $request->month;
+        $year = (int) $request->year;
         $amount = $request->amount;
         $notes = $request->notes;
 

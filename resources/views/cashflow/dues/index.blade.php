@@ -21,122 +21,127 @@
             <div class="bg-white p-6 shadow rounded-lg space-y-4">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                     <div>
-                        <h3 class="text-lg font-bold text-gray-800">Daftar Tagihan & Status Iuran Warga</h3>
-                        <p class="text-xs text-gray-500">Pencatatan dilakukan per Kepala Keluarga (KK). Pembayaran akan tercatat otomatis pada Dana Masuk Kas RT.</p>
+                        <h3 class="text-lg font-bold text-gray-800">Ringkasan Iuran Per Blok</h3>
+                        <p class="text-xs text-gray-500">Klik "Lihat Detail" untuk melihat status iuran per KK dalam satu
+                            blok.</p>
                     </div>
-                    <a href="{{ route('cashflow.dues.create') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded text-sm flex items-center gap-1 shadow-sm w-fit">
+                    <a href="{{ route('cashflow.dues.create') }}"
+                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded text-sm flex items-center gap-1 shadow-sm w-fit">
                         + Buat Tagihan Iuran
                     </a>
                 </div>
 
-                <!-- Filter Bar -->
-                <form action="{{ route('cashflow.dues.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 pt-4 border-t border-gray-100">
+                <!-- Filter Periode -->
+                <form action="{{ route('cashflow.dues.index') }}" method="GET"
+                    class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-4 border-t border-gray-100">
                     <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1">Pilih KK</label>
-                        <select name="household_id" class="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Semua KK</option>
-                            @foreach ($households as $hh)
-                                <option value="{{ $hh->id }}" {{ request('household_id') == $hh->id ? 'selected' : '' }}>[{{ $hh->block->name ?? '-' }}] {{ $hh->head_name }}</option>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Blok</label>
+                        <select name="filter_block"
+                            class="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Semua Blok</option>
+                            @foreach ($blocks as $blk)
+                                <option value="{{ $blk->id }}"
+                                    {{ request('filter_block') == $blk->id ? 'selected' : '' }}>
+                                    {{ $blk->name }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-xs font-medium text-gray-500 mb-1">Bulan</label>
-                        <select name="month" class="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Semua Bulan</option>
+                        <select name="month"
+                            class="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                             @php
-                                $months = [1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'];
+                                $months = [
+                                    1 => 'Januari',
+                                    2 => 'Februari',
+                                    3 => 'Maret',
+                                    4 => 'April',
+                                    5 => 'Mei',
+                                    6 => 'Juni',
+                                    7 => 'Juli',
+                                    8 => 'Agustus',
+                                    9 => 'September',
+                                    10 => 'Oktober',
+                                    11 => 'November',
+                                    12 => 'Desember',
+                                ];
                             @endphp
                             @foreach ($months as $num => $name)
-                                <option value="{{ $num }}" {{ request('month') == $num ? 'selected' : '' }}>{{ $name }}</option>
+                                <option value="{{ $num }}" {{ (int) $month === $num ? 'selected' : '' }}>
+                                    {{ $name }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-xs font-medium text-gray-500 mb-1">Tahun</label>
-                        <select name="year" class="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Semua Tahun</option>
+                        <select name="year"
+                            class="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                             @for ($y = date('Y'); $y >= 2024; $y--)
-                                <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>{{ $y }}</option>
+                                <option value="{{ $y }}" {{ (int) $year === $y ? 'selected' : '' }}>
+                                    {{ $y }}</option>
                             @endfor
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1">Status Pembayaran</label>
-                        <select name="status" class="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Semua Status</option>
-                            <option value="Belum Lunas" {{ request('status') == 'Belum Lunas' ? 'selected' : '' }}>Belum Lunas</option>
-                            <option value="Lunas" {{ request('status') == 'Lunas' ? 'selected' : '' }}>Lunas</option>
-                        </select>
-                    </div>
-
                     <div class="flex items-end">
-                        <button type="submit" class="w-full py-2 px-4 bg-gray-800 text-white rounded text-sm hover:bg-gray-900 font-medium">Cari / Filter</button>
+                        <button type="submit"
+                            class="w-full py-2 px-4 bg-gray-800 text-white rounded text-sm hover:bg-gray-900 font-medium">Tampilkan</button>
                     </div>
                 </form>
 
-                <!-- Dues Table -->
+                <!-- Summary Table -->
                 <div class="overflow-x-auto pt-2">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-gray-50 border-b">
-                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Blok / KK</th>
-                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Kepala Keluarga</th>
-                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Periode</th>
-                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Tagihan (Rp)</th>
-                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Tgl Bayar</th>
-                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">Aksi</th>
+                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Blok
+                                </th>
+                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah
+                                    KK</th>
+                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Lunas
+                                </th>
+                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Belum
+                                    Lunas</th>
+                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Total
+                                    Terkumpul</th>
+                                <th
+                                    class="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">
+                                    Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            @forelse ($dues as $due)
+                            @forelse ($summary as $blok)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 text-sm text-gray-700">
-                                        <span class="font-semibold">{{ $due->household->block->name ?? 'Blok -' }}</span> / No. {{ $due->household->household_number ?? '-' }}
+                                    <td class="py-3 px-4 text-sm font-bold text-gray-900">{{ $blok->name }}</td>
+                                    <td class="py-3 px-4 text-sm text-gray-700">{{ $blok->total_kk }}</td>
+                                    <td class="py-3 px-4 text-sm">
+                                        <span
+                                            class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">{{ $blok->lunas }}
+                                            Lunas</span>
                                     </td>
-                                    <td class="py-3 px-4 text-sm font-medium text-gray-900">{{ $due->household->head_name ?? '-' }}</td>
-                                    <td class="py-3 px-4 text-sm text-gray-700 whitespace-nowrap">{{ $due->month_name }} {{ $due->year }}</td>
-                                    <td class="py-3 px-4 text-sm font-bold text-gray-900 whitespace-nowrap">Rp {{ number_format($due->amount, 0, ',', '.') }}</td>
-                                    <td class="py-3 px-4 text-sm whitespace-nowrap">
-                                        @if ($due->status === 'Lunas')
-                                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Lunas</span>
-                                        @else
-                                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Belum Lunas</span>
-                                        @endif
+                                    <td class="py-3 px-4 text-sm">
+                                        <span
+                                            class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">{{ $blok->belum_lunas }}
+                                            Belum</span>
                                     </td>
-                                    <td class="py-3 px-4 text-sm text-gray-600 whitespace-nowrap">
-                                        {{ $due->payment_date ? $due->payment_date->format('d/m/Y') : '-' }}
-                                    </td>
-                                    <td class="py-3 px-4 text-sm text-right whitespace-nowrap">
-                                        @if ($due->status === 'Belum Lunas')
-                                            <!-- Inline Pay Modal / Trigger -->
-                                            <form action="{{ route('cashflow.dues.pay', $due) }}" method="POST" class="inline-flex items-center gap-1" onsubmit="return confirm('Konfirmasi pembayaran iuran ini?')">
-                                                @csrf
-                                                <input type="hidden" name="payment_date" value="{{ date('Y-m-d') }}">
-                                                <button type="submit" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-semibold shadow-sm">
-                                                    Bayar Sekarang
-                                                </button>
-                                            </form>
-                                        @else
-                                            <span class="text-xs text-emerald-600 font-medium">✔ Terbayar</span>
-                                        @endif
+                                    <td class="py-3 px-4 text-sm font-bold text-gray-900">Rp
+                                        {{ number_format($blok->total_terkumpul, 0, ',', '.') }}</td>
+                                    <td class="py-3 px-4 text-sm text-right">
+                                        <a href="{{ route('cashflow.dues.index', ['block_id' => $blok->id, 'month' => $month, 'year' => $year]) }}"
+                                            class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-semibold shadow-sm">
+                                            Lihat Detail
+                                        </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="py-6 text-center text-gray-500">Belum ada data tagihan iuran.</td>
+                                    <td colspan="6" class="py-6 text-center text-gray-500">Belum ada data blok.</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
-                </div>
-
-                <div class="mt-4">
-                    {{ $dues->links() }}
                 </div>
             </div>
         </div>
