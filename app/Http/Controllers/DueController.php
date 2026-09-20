@@ -93,6 +93,12 @@ class DueController extends Controller
 
         $summary = $summaryQuery->orderBy('blocks.name')->get();
 
+        $totalKK = $summary->sum('total_kk');
+        $totalLunas = $summary->sum('lunas');
+        $totalBelumBayar = $totalKK - $totalLunas;
+        $totalTerkumpul = $summary->sum('total_terkumpul');
+        $persentaseLunas = $totalKK > 0 ? round(($totalLunas / $totalKK) * 100, 1) : 0;
+
         // TAMBAHKAN INI
         $blocks = DB::table('blocks')->orderBy('name')->get();
 
@@ -107,7 +113,10 @@ class DueController extends Controller
             ->withQueryString();
 
         // GANTI baris return-nya, tambahkan 'blocks'
-        return view('cashflow.dues.index', compact('summary', 'month', 'year', 'households', 'dues', 'blocks'));
+        return view('cashflow.dues.index', compact(
+            'summary', 'month', 'year', 'households', 'dues', 'blocks',
+            'totalKK', 'totalLunas', 'totalBelumBayar', 'totalTerkumpul', 'persentaseLunas'
+        ));
     }
 
     public function create()

@@ -87,6 +87,21 @@ class PengajuanIuranController extends Controller
                 ]);
         }
 
+        // Cegah pengajuan ganda untuk periode yang sudah disetujui
+        $sudahDisetujui = PengajuanIuran::where('block_id', $user->block_id)
+            ->where('bulan', $request->bulan)
+            ->where('tahun', $request->tahun)
+            ->where('status', 'Disetujui')
+            ->exists();
+
+        if ($sudahDisetujui) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'bulan' => 'Pengajuan untuk periode ini sudah disetujui sebelumnya. Tidak dapat mengajukan lagi.',
+                ]);
+        }
+
         $nominalPerKK = 30000;
         $jumlahKK = $households->count();
         $totalIuran = $jumlahKK * $nominalPerKK;
@@ -170,5 +185,24 @@ class PengajuanIuranController extends Controller
         return view('pengajuan-iuran.show', compact(
             'pengajuanIuran', 'householdsBelumBayar'
         ));
+    }
+
+    public function cancel(PengajuanIuran $pengajuanIuran)
+    {
+        $user = auth()->user();
+
+        if ($pengajuanIuran->block_id !== $user->block_id) {
+            abort(403);
+        }
+
+        if ($pengajuanIuran->status !== 'Menunggu Verifikasi') {
+            return back()->with('error', 'Hanya pengajuan yang masih menunggu verifikasi yang dapat dibatalkan.');
+        }
+
+        $pengajuanIuran->delete();
+
+        return redirect()
+            ->route('pengajuan-iuran.index')
+            ->with('success', 'Pengajuan iuran berhasil dibatalkan.');
     }
 }

@@ -48,9 +48,9 @@
                                 {{ $year }}</span>
                         </p>
                     </div>
-                    <a href="{{ route('cashflow.dues.create') }}"
-                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded text-sm flex items-center gap-1 shadow-sm w-fit">
-                        + Buat Tagihan Iuran
+                    <a href="{{ route('verifikasi-iuran.export-excel', ['block_id' => request('block_id'), 'month' => $month, 'year' => $year]) }}"
+                        class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded text-sm flex items-center gap-1 shadow-sm w-fit">
+                        📥 Export Excel
                     </a>
                 </div>
 

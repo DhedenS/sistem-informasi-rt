@@ -1,20 +1,20 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlockController;
-use App\Http\Controllers\HouseholdController;
-use App\Http\Controllers\TransactionCategoryController;
-use App\Http\Controllers\SuratMasukController;
-use App\Http\Controllers\FundSourceController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\DueController;
 use App\Http\Controllers\CashflowReportController;
-use App\Http\Controllers\PengajuanIuranController;
-use App\Http\Controllers\VerifikasiIuranController;
-use App\Http\Controllers\IuranSayaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DueController;
+use App\Http\Controllers\FundSourceController;
+use App\Http\Controllers\HouseholdController;
+use App\Http\Controllers\IuranSayaController;
+use App\Http\Controllers\PengajuanIuranController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiwayatTransaksiController;
+use App\Http\Controllers\SuratMasukController;
+use App\Http\Controllers\TransactionCategoryController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\VerifikasiIuranController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +26,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | Dashboard
@@ -37,8 +36,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-
-    /* 
+/*
 |--------------------------------------------------------------------------
 | Riwayat Transaksi
 |--------------------------------------------------------------------------
@@ -50,7 +48,6 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::get('/riwayat-transaksi', [RiwayatTransaksiController::class, 'index'])
     ->middleware('auth')
     ->name('riwayat-transaksi.index');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -71,7 +68,6 @@ Route::middleware('auth')->group(function () {
 
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | Administrasi Surat
@@ -85,7 +81,6 @@ Route::middleware(['auth', 'role:Superadmin|Sekretaris'])->group(function () {
     Route::resource('surat-masuk', SuratMasukController::class);
 
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -105,7 +100,6 @@ Route::middleware(['auth', 'role:Superadmin|Ketua RT'])->group(function () {
 
 });
 
-
 /*
 |-----------------------------
 
@@ -121,7 +115,6 @@ Route::middleware(['auth', 'role:Superadmin|Ketua RT|Bendahara'])->group(functio
     Route::resource('households', HouseholdController::class);
 
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -151,7 +144,6 @@ Route::middleware(['auth', 'role:Bendahara'])->group(function () {
             [TransactionController::class, 'storeIncome']
         )->name('transactions.store-income');
 
-
         /*
         |--------------------------------------------------------------------------
         | Transaksi Pengeluaran
@@ -168,7 +160,6 @@ Route::middleware(['auth', 'role:Bendahara'])->group(function () {
             [TransactionController::class, 'storeExpense']
         )->name('transactions.store-expense');
 
-
         /*
         |--------------------------------------------------------------------------
         | Data Transaksi
@@ -180,9 +171,8 @@ Route::middleware(['auth', 'role:Bendahara'])->group(function () {
                 'create',
                 'store',
                 'edit',
-                'update'
+                'update',
             ]);
-
 
         /*
         |--------------------------------------------------------------------------
@@ -194,14 +184,13 @@ Route::middleware(['auth', 'role:Bendahara'])->group(function () {
             ->only([
                 'index',
                 'create',
-                'store'
+                'store',
             ]);
 
         Route::post(
             'dues/{due}/pay',
             [DueController::class, 'pay']
         )->name('dues.pay');
-
 
         /*
         |--------------------------------------------------------------------------
@@ -227,7 +216,6 @@ Route::middleware(['auth', 'role:Bendahara'])->group(function () {
     });
 
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -257,7 +245,6 @@ Route::middleware(['auth', 'role:Ketua Block'])->group(function () {
         [PengajuanIuranController::class, 'index']
     )->name('pengajuan-iuran.index');
 
-
     /*
     |--------------------------------------------------------------------------
     | Form Pengajuan Iuran
@@ -268,7 +255,6 @@ Route::middleware(['auth', 'role:Ketua Block'])->group(function () {
         '/pengajuan-iuran/create',
         [PengajuanIuranController::class, 'create']
     )->name('pengajuan-iuran.create');
-
 
     /*
     |--------------------------------------------------------------------------
@@ -281,7 +267,6 @@ Route::middleware(['auth', 'role:Ketua Block'])->group(function () {
         [PengajuanIuranController::class, 'store']
     )->name('pengajuan-iuran.store');
 
-
     /*
     |--------------------------------------------------------------------------
     | Detail Pengajuan Iuran
@@ -293,6 +278,8 @@ Route::middleware(['auth', 'role:Ketua Block'])->group(function () {
         [PengajuanIuranController::class, 'show']
     )->name('pengajuan-iuran.show');
 
+    Route::delete('/pengajuan-iuran/{pengajuanIuran}/cancel', [PengajuanIuranController::class, 'cancel'])
+        ->name('pengajuan-iuran.cancel');
 });
 
 Route::middleware(['auth', 'role:Bendahara|Superadmin|Ketua RT|Ketua Block'])->group(function () {
@@ -324,11 +311,10 @@ Route::middleware(['auth', 'role:Warga'])->group(function () {
         ->name('iuran-saya.index');
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | Authentication
 |--------------------------------------------------------------------------
 */
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
