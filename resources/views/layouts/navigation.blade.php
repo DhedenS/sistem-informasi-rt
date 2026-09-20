@@ -709,7 +709,7 @@
                         px-3 py-2.5
                         transition
 
-                        {{ request()->routeIs('verifikasi-iuran.*')
+                        {{ request()->routeIs('verifikasi-iuran.index') || request()->routeIs('verifikasi-iuran.show')
                             ? 'bg-blue-600 text-white shadow-sm'
                             : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                         }}
@@ -722,6 +722,35 @@
 
                     <span class="text-sm font-medium">
                         Verifikasi Iuran
+                    </span>
+
+                </a>
+
+                {{-- REKAP IURAN WARGA --}}
+                <a
+                    href="{{ route('verifikasi-iuran.rekap') }}"
+                    @click="sidebarOpen = false"
+                    class="
+                        mb-1
+                        flex min-h-11
+                        items-center gap-3
+                        rounded-xl
+                        px-3 py-2.5
+                        transition
+
+                        {{ request()->routeIs('verifikasi-iuran.rekap')
+                            ? 'bg-blue-600 text-white shadow-sm'
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                        }}
+                    "
+                >
+
+                    <span class="flex w-6 shrink-0 justify-center text-lg">
+                        📋
+                    </span>
+
+                    <span class="text-sm font-medium">
+                        Rekap Iuran Warga
                     </span>
 
                 </a>

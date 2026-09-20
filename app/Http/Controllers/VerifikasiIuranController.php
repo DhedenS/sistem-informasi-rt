@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\RekapIuranExport;
+use App\Models\Block;
 use App\Models\Due;
 use App\Models\Household;
 use App\Models\PengajuanIuran;
+use App\Models\PengajuanIuranDetail;
 use App\Models\Transaction;
 use App\Models\TransactionCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class VerifikasiIuranController extends Controller
 {
@@ -236,5 +240,143 @@ class VerifikasiIuranController extends Controller
                 'success',
                 'Pengajuan iuran berhasil ditolak.'
             );
+    }
+
+    public function rekap(Request $request)
+    {
+        $month = (int) ($request->month ?? date('m'));
+        $year = (int) ($request->year ?? date('Y'));
+        $selectedBlockId = $request->block_id;
+        $selectedStatus = $request->status;
+
+        $blocks = Block::where('is_active', true)->orderBy('name')->get();
+
+        $householdsQuery = Household::with('block')->where('is_active', true);
+        if (!empty($selectedBlockId)) {
+            $householdsQuery->where('block_id', $selectedBlockId);
+        }
+        $households = $householdsQuery->orderBy('block_id')->orderBy('household_number')->get();
+
+        $paidDues = Due::where('month', $month)
+            ->where('year', $year)
+            ->get()
+            ->keyBy('household_id');
+
+        $pendingDetailIds = PengajuanIuranDetail::whereHas('pengajuanIuran', function ($q) use ($month, $year) {
+            $q->where('bulan', $month)
+              ->where('tahun', $year)
+              ->where('status', 'Menunggu Verifikasi');
+        })->pluck('household_id')->toArray();
+
+        $rekapList = [];
+        $totalKK = 0;
+        $lunasKK = 0;
+        $menungguKK = 0;
+        $belumBayarKK = 0;
+        $totalNominal = 0;
+
+        foreach ($households as $hh) {
+            $due = $paidDues->get($hh->id);
+            $isPending = in_array($hh->id, $pendingDetailIds);
+
+            if ($due && $due->status === 'Lunas') {
+                $status = 'Sudah Bayar';
+                $tglBayar = $due->payment_date ? $due->payment_date->format('d/m/Y') : '-';
+                $nominal = $due->paid_amount > 0 ? (float) $due->paid_amount : (float) $due->amount;
+                $catatan = $due->notes ?? 'Lunas';
+                $lunasKK++;
+                $totalNominal += $nominal;
+            } elseif ($isPending) {
+                $status = 'Menunggu Verifikasi';
+                $tglBayar = '-';
+                $nominal = 0;
+                $catatan = 'Dalam Pengajuan Blok';
+                $menungguKK++;
+            } else {
+                $status = 'Belum Bayar';
+                $tglBayar = '-';
+                $nominal = 0;
+                $catatan = 'Belum Bayar';
+                $belumBayarKK++;
+            }
+
+            $totalKK++;
+
+            // Filter by status
+            if (!empty($selectedStatus)) {
+                if ($selectedStatus === 'Lunas' && $status !== 'Sudah Bayar') {
+                    continue;
+                }
+                if ($selectedStatus === 'Belum Lunas' && $status === 'Sudah Bayar') {
+                    continue;
+                }
+                if ($selectedStatus === 'Menunggu Verifikasi' && $status !== 'Menunggu Verifikasi') {
+                    continue;
+                }
+            }
+
+            $rekapList[] = (object) [
+                'household_id' => $hh->id,
+                'block_name' => $hh->block->name ?? '-',
+                'household_number' => $hh->household_number ?? '-',
+                'head_name' => $hh->head_name ?? '-',
+                'phone' => $hh->phone ?? '-',
+                'status' => $status,
+                'payment_date' => $tglBayar,
+                'nominal' => $nominal,
+                'notes' => $catatan,
+            ];
+        }
+
+        $persentaseLunas = $totalKK > 0 ? round(($lunasKK / $totalKK) * 100, 1) : 0;
+
+        return view('verifikasi-iuran.rekap', compact(
+            'blocks',
+            'rekapList',
+            'month',
+            'year',
+            'selectedBlockId',
+            'selectedStatus',
+            'totalKK',
+            'lunasKK',
+            'menungguKK',
+            'belumBayarKK',
+            'totalNominal',
+            'persentaseLunas'
+        ));
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $month = (int) ($request->month ?? date('m'));
+        $year = (int) ($request->year ?? date('Y'));
+        $blockName = 'Semua_Blok';
+
+        if ($request->filled('block_id')) {
+            $block = Block::find($request->block_id);
+            if ($block) {
+                $blockName = 'Blok_' . str_replace(' ', '_', $block->name);
+            }
+        }
+
+        $fileName = "Rekap_Iuran_Warga_{$blockName}_{$month}_{$year}.xlsx";
+
+        return Excel::download(new RekapIuranExport($request->all()), $fileName);
+    }
+
+    public function exportPengajuanExcel(PengajuanIuran $pengajuanIuran)
+    {
+        $pengajuanIuran->load(['block']);
+
+        $filters = [
+            'month' => $pengajuanIuran->bulan,
+            'year' => $pengajuanIuran->tahun,
+            'block_id' => $pengajuanIuran->block_id,
+        ];
+
+        $blockName = $pengajuanIuran->block ? str_replace(' ', '_', $pengajuanIuran->block->name) : 'Blok';
+        $fileName = "Rekap_Iuran_Pengajuan_#{$pengajuanIuran->id}_{$blockName}_{$pengajuanIuran->bulan}_{$pengajuanIuran->tahun}.xlsx";
+
+        return Excel::download(new RekapIuranExport($filters), $fileName);
     }
 }

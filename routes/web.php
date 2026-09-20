@@ -295,6 +295,17 @@ Route::middleware(['auth', 'role:Ketua Block'])->group(function () {
 
 });
 
+Route::middleware(['auth', 'role:Bendahara|Superadmin|Ketua RT|Ketua Block'])->group(function () {
+    Route::get('/verifikasi-iuran/rekap', [VerifikasiIuranController::class, 'rekap'])
+        ->name('verifikasi-iuran.rekap');
+
+    Route::get('/verifikasi-iuran/export-excel', [VerifikasiIuranController::class, 'exportExcel'])
+        ->name('verifikasi-iuran.export-excel');
+
+    Route::get('/verifikasi-iuran/{pengajuanIuran}/export-excel', [VerifikasiIuranController::class, 'exportPengajuanExcel'])
+        ->name('verifikasi-iuran.export-pengajuan-excel');
+});
+
 Route::middleware(['auth', 'role:Bendahara'])->group(function () {
     Route::get('/verifikasi-iuran', [VerifikasiIuranController::class, 'index'])
         ->name('verifikasi-iuran.index');

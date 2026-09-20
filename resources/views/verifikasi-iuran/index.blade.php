@@ -47,6 +47,24 @@
 
 
             {{-- ====================================================== --}}
+            {{-- BANNER REKAP & EXPORT EXCEL --}}
+            {{-- ====================================================== --}}
+            <div class="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-5 text-white shadow-sm">
+                <div>
+                    <h3 class="text-lg font-bold flex items-center gap-2">
+                        <span>📊</span> Rekapitulasi Iuran Warga & Export Excel
+                    </h3>
+                    <p class="text-sm text-blue-100 mt-1">
+                        Lihat rekap status iuran warga per blok (siapa yang sudah & belum bayar) dan download Excel (.xlsx).
+                    </p>
+                </div>
+                <a href="{{ route('verifikasi-iuran.rekap') }}"
+                   class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white text-blue-700 font-semibold text-sm hover:bg-blue-50 transition shadow shrink-0">
+                    Buka Rekap & Export Excel →
+                </a>
+            </div>
+
+            {{-- ====================================================== --}}
             {{-- CARD UTAMA --}}
             {{-- ====================================================== --}}
 
