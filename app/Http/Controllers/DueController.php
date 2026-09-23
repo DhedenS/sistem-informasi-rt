@@ -55,7 +55,7 @@ class DueController extends Controller
                     'blocks.name',
                     DB::raw('COUNT(DISTINCT households.id) as total_kk'),
                     DB::raw('SUM(CASE WHEN dues.status = "Lunas" THEN 1 ELSE 0 END) as lunas'),
-                    DB::raw('SUM(CASE WHEN dues.status = "Belum Lunas" THEN 1 ELSE 0 END) as belum_lunas'),
+                    DB::raw('COUNT(DISTINCT households.id) - SUM(CASE WHEN dues.status = "Lunas" THEN 1 ELSE 0 END) as belum_lunas'),
                     DB::raw('SUM(CASE WHEN dues.status = "Lunas" THEN dues.amount ELSE 0 END) as total_terkumpul')
                 )
                 ->groupBy('blocks.id', 'blocks.name')
@@ -81,7 +81,7 @@ class DueController extends Controller
                 'blocks.name',
                 DB::raw('COUNT(DISTINCT households.id) as total_kk'),
                 DB::raw('SUM(CASE WHEN dues.status = "Lunas" THEN 1 ELSE 0 END) as lunas'),
-                DB::raw('SUM(CASE WHEN dues.status = "Belum Lunas" THEN 1 ELSE 0 END) as belum_lunas'),
+                DB::raw('COUNT(DISTINCT households.id) - SUM(CASE WHEN dues.status = "Lunas" THEN 1 ELSE 0 END) as belum_lunas'),
                 DB::raw('SUM(CASE WHEN dues.status = "Lunas" THEN dues.amount ELSE 0 END) as total_terkumpul')
             )
             ->groupBy('blocks.id', 'blocks.name');

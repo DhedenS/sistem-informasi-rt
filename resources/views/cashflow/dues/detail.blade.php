@@ -94,7 +94,7 @@
                 </form>
 
                 <!-- Dues Table -->
-                <div class="overflow-x-auto pt-2">
+                <div class="hidden md:block overflow-x-auto pt-2">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-gray-50 border-b">
@@ -159,7 +159,80 @@
                         </tbody>
                     </table>
                 </div>
+                <!-- Dues Accordion (HP) -->
+                <div class="md:hidden space-y-2 pt-2">
+                    @forelse ($dues as $due)
+                        <details class="group rounded-xl border border-gray-200 overflow-hidden bg-white">
 
+                            {{-- Ringkas: selalu terlihat --}}
+                            <summary
+                                class="flex items-center justify-between gap-2 px-3 py-2.5 cursor-pointer select-none hover:bg-gray-50 list-none [&::-webkit-details-marker]:hidden">
+
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <svg class="w-4 h-4 shrink-0 text-gray-400 transition-transform group-open:rotate-90"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7" />
+                                    </svg>
+                                    <span class="font-semibold text-sm text-gray-900 truncate">
+                                        {{ $due->household->head_name ?? '-' }}
+                                    </span>
+                                </div>
+
+                                <span
+                                    class="shrink-0 px-2 py-0.5 rounded-full text-xs font-medium {{ $due->status === 'Lunas' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">
+                                    {{ $due->status }}
+                                </span>
+                            </summary>
+
+                            {{-- Detail: muncul saat diklik --}}
+                            <div class="px-3 py-3 space-y-2 border-t border-gray-100 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Blok</span>
+                                    <span class="text-gray-900">{{ $due->household->block->name ?? '-' }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Periode</span>
+                                    <span class="text-gray-900">{{ $months[(int) $due->month] ?? $due->month }}
+                                        {{ $due->year }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Jumlah</span>
+                                    <span class="font-semibold text-gray-900">Rp
+                                        {{ number_format($due->amount, 0, ',', '.') }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Tgl Bayar</span>
+                                    <span class="text-gray-900">
+                                        {{ $due->payment_date ? \Carbon\Carbon::parse($due->payment_date)->format('d/m/Y') : '-' }}
+                                    </span>
+                                </div>
+
+                                <div class="pt-2">
+                                    @if ($due->status !== 'Lunas')
+                                        <form action="{{ route('cashflow.dues.pay', $due->id) }}" method="POST"
+                                            onsubmit="return confirm('Tandai iuran {{ $due->household->head_name }} sebagai Lunas?');">
+                                            @csrf
+                                            <input type="hidden" name="payment_date"
+                                                value="{{ now()->toDateString() }}">
+                                            <button type="submit"
+                                                class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm">
+                                                Tandai Lunas
+                                            </button>
+                                        </form>
+                                    @else
+                                        <p class="text-center text-xs text-gray-400">Sudah Lunas</p>
+                                    @endif
+                                </div>
+                            </div>
+
+                        </details>
+                    @empty
+                        <div class="py-6 text-center text-gray-500 text-sm">
+                            Tidak ada data iuran untuk periode/filter ini.
+                        </div>
+                    @endforelse
+                </div>
                 <div class="mt-4">
                     {{ $dues->links() }}
                 </div>
