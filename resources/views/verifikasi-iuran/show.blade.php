@@ -515,15 +515,6 @@
                                         focus:ring-blue-500"
                                         placeholder="Contoh: {{ $totalHouseholdsAktif * $pengajuanIuran->nominal_per_kk }}">
                                 </div>
-
-                                <p class="text-xs text-gray-500 mt-2">
-                                    Masukkan angka tanpa titik atau simbol Rp.
-                                    Nominal seharusnya ({{ $totalHouseholdsAktif }} KK × Rp
-                                    {{ number_format($pengajuanIuran->nominal_per_kk, 0, ',', '.') }}):
-                                    Rp
-                                    {{ number_format($totalHouseholdsAktif * $pengajuanIuran->nominal_per_kk, 0, ',', '.') }}
-                                </p>
-
                                 @error('uang_diterima')
                                     <p class="mt-2 text-sm text-red-600">
                                         {{ $message }}

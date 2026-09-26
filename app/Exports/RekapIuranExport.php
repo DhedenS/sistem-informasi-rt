@@ -87,7 +87,7 @@ class RekapIuranExport implements FromCollection, WithHeadings, WithMapping, Wit
                 $status = 'Sudah Bayar';
                 $tglBayar = $due->payment_date ? $due->payment_date->format('d/m/Y') : '-';
                 $nominal = $due->paid_amount > 0 ? (float) $due->paid_amount : (float) $due->amount;
-                $catatan = $due->notes ?? 'Lunas';
+                $catatan = 'Lunas via Pembayaran Ketua Blok';
             } elseif ($isPending) {
                 $status = 'Menunggu Verifikasi';
                 $tglBayar = '-';
@@ -169,7 +169,7 @@ class RekapIuranExport implements FromCollection, WithHeadings, WithMapping, Wit
         $sheet->getStyle('A1:A' . $totalRows)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('B1:B' . $totalRows)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('E1:F' . $totalRows)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        
+
         // Right align Nominal
         $sheet->getStyle('G2:G' . $totalRows)->getNumberFormat()->setFormatCode('#,##0');
         $sheet->getStyle('G1:G' . $totalRows)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);

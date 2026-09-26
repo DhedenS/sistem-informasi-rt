@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Due;
 use App\Models\FundSource;
 use App\Models\Household;
+use App\Models\IuranRate;
 use App\Models\Transaction;
 use App\Models\TransactionCategory;
 use Illuminate\Http\Request;
@@ -123,7 +124,9 @@ class DueController extends Controller
     {
         $households = Household::where('is_active', true)->with('block')->get();
 
-        return view('cashflow.dues.create', compact('households'));
+        $iuranRates = IuranRate::orderBy('year')->orderBy('month')->get();
+
+        return view('cashflow.dues.create', compact('households', 'iuranRates'));
     }
 
     public function store(Request $request)

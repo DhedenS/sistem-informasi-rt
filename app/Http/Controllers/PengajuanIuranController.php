@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Block;
 use App\Models\Household;
+use App\Models\IuranRate;
 use App\Models\PengajuanIuran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -43,11 +44,12 @@ class PengajuanIuranController extends Controller
             ->get();
 
         $block = Block::find($user->block_id);
-        $nominalPerKK = 30000;
-        $totalHouseholds = $households->count(); // total KK aktif di blok
+        $nominalPerKK = 30000; // default fallback, akan di-update per periode di view
+        $totalHouseholds = $households->count();
+        $iuranRates = IuranRate::orderBy('year')->orderBy('month')->get();
 
         return view('pengajuan-iuran.create', compact(
-            'households', 'block', 'nominalPerKK', 'totalHouseholds'
+            'households', 'block', 'nominalPerKK', 'totalHouseholds', 'iuranRates'
         ));
     }
 
@@ -102,7 +104,7 @@ class PengajuanIuranController extends Controller
                 ]);
         }
 
-        $nominalPerKK = 30000;
+        $nominalPerKK = IuranRate::getRateFor($request->bulan, $request->tahun);
         $jumlahKK = $households->count();
         $totalIuran = $jumlahKK * $nominalPerKK;
 

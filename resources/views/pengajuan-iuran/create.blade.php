@@ -120,12 +120,12 @@
                         Nominal Iuran
                     </p>
 
-                    <p class="mt-1 text-3xl font-bold text-indigo-900">
+                    <p id="nominalDisplay" class="mt-1 text-3xl font-bold text-indigo-900">
                         Rp {{ number_format($nominalPerKK, 0, ',', '.') }}
                     </p>
 
                     <p class="mt-1 text-sm text-indigo-700">
-                        Nominal ditentukan oleh sistem dan tidak dapat diubah.
+                        Nominal ditentukan oleh sistem sesuai periode yang dipilih.
                     </p>
 
                 </div>
@@ -289,26 +289,40 @@
 
     {{-- JavaScript hitung total --}}
     <script>
-        const nominalPerKK = {{ $nominalPerKK }};
+        const iuranRates = @json($iuranRates->map(fn($r) => ['year' => $r->year, 'month' => $r->month, 'amount' => (float) $r->amount])->values());
+
+        let nominalPerKK = {{ $nominalPerKK }};
 
         const checkboxes = document.querySelectorAll('.household-checkbox');
-
         const jumlahKKElement = document.getElementById('jumlahKK');
-
         const totalIuranElement = document.getElementById('totalIuran');
-
         const selectAllButton = document.getElementById('selectAll');
-
         const totalHouseholds = {{ $totalHouseholds }};
-
         const belumBayarElement = document.getElementById('belumBayar');
+        const nominalDisplay = document.getElementById('nominalDisplay');
+        const bulanSelect = document.getElementById('bulan');
+        const tahunSelect = document.getElementById('tahun');
 
         function formatRupiah(angka) {
-
             return new Intl.NumberFormat('id-ID').format(angka);
-
         }
 
+        function getRateFor(month, year) {
+            const applicable = iuranRates.filter(r =>
+                r.year < year || (r.year === year && r.month <= month)
+            );
+            if (applicable.length === 0) return 30000;
+            applicable.sort((a, b) => (b.year - a.year) || (b.month - a.month));
+            return applicable[0].amount;
+        }
+
+        function updateNominal() {
+            const month = parseInt(bulanSelect.value);
+            const year = parseInt(tahunSelect.value);
+            nominalPerKK = getRateFor(month, year);
+            nominalDisplay.textContent = 'Rp ' + formatRupiah(nominalPerKK);
+            updateTotal();
+        }
 
         function updateTotal() {
             const selected = document.querySelectorAll('.household-checkbox:checked');
@@ -321,33 +335,25 @@
             belumBayarElement.textContent = belumBayar + ' KK';
         }
 
-
         checkboxes.forEach(function(checkbox) {
-
             checkbox.addEventListener('change', updateTotal);
-
         });
 
+        bulanSelect.addEventListener('change', updateNominal);
+        tahunSelect.addEventListener('change', updateNominal);
 
         selectAllButton.addEventListener('click', function() {
-
             const allChecked =
-                document.querySelectorAll(
-                    '.household-checkbox:checked'
-                ).length === checkboxes.length;
+                document.querySelectorAll('.household-checkbox:checked').length === checkboxes.length;
 
             checkboxes.forEach(function(checkbox) {
-
                 checkbox.checked = !allChecked;
-
             });
 
             updateTotal();
-
         });
 
-
-        updateTotal();
+        updateNominal();
     </script>
 
 </x-app-layout>

@@ -5,84 +5,61 @@
 
     <meta charset="utf-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <meta
-        name="csrf-token"
-        content="{{ csrf_token() }}"
-    >
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>
         {{ config('app.name', 'Sistem Informasi RT') }}
     </title>
 
 
-    <link
-        rel="preconnect"
-        href="https://fonts.bunny.net"
-    >
+    <link rel="preconnect" href="https://fonts.bunny.net">
 
-    <link
-        href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet">
 
 
-    @vite([
-        'resources/css/app.css',
-        'resources/js/app.js'
-    ])
-
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 
 <body class="bg-gray-100 font-sans text-gray-900 antialiased">
 
 
-<div
-    x-data="{ sidebarOpen: false }"
-    @keydown.escape.window="sidebarOpen = false"
-    class="min-h-screen"
->
+    <div x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false" class="min-h-screen">
 
 
-    {{-- ====================================================== --}}
-    {{-- OVERLAY MOBILE --}}
-    {{-- ====================================================== --}}
+        {{-- ====================================================== --}}
+        {{-- OVERLAY MOBILE --}}
+        {{-- ====================================================== --}}
 
-    <div
-        x-cloak
-        x-show="sidebarOpen"
-        x-transition.opacity
-        @click="sidebarOpen = false"
-        class="
+        <div x-cloak x-show="sidebarOpen" x-transition.opacity @click="sidebarOpen = false"
+            class="
             fixed inset-0
             z-40
             bg-black/50
             backdrop-blur-[1px]
             lg:hidden
-        "
-    ></div>
+        ">
+        </div>
 
 
 
-    {{-- ====================================================== --}}
-    {{-- SIDEBAR --}}
-    {{-- ====================================================== --}}
+        {{-- ====================================================== --}}
+        {{-- SIDEBAR --}}
+        {{-- ====================================================== --}}
 
-    @include('layouts.navigation')
+        @include('layouts.navigation')
 
 
 
-    {{-- ====================================================== --}}
-    {{-- MAIN WRAPPER --}}
-    {{-- ====================================================== --}}
+        {{-- ====================================================== --}}
+        {{-- MAIN WRAPPER --}}
+        {{-- ====================================================== --}}
 
-    <div
-        class="
+        <div
+            class="
             min-h-screen
             min-w-0
             w-full
@@ -90,16 +67,15 @@
             duration-300
             lg:ml-64
             lg:w-[calc(100%-16rem)]
-        "
-    >
+        ">
 
 
-        {{-- ================================================== --}}
-        {{-- TOP BAR --}}
-        {{-- ================================================== --}}
+            {{-- ================================================== --}}
+            {{-- TOP BAR --}}
+            {{-- ================================================== --}}
 
-        <header
-            class="
+            <header
+                class="
                 sticky
                 top-0
                 z-30
@@ -122,28 +98,22 @@
 
                 sm:px-5
                 lg:px-8
-            "
-        >
+            ">
 
 
-            {{-- KIRI --}}
-            <div
-                class="
+                {{-- KIRI --}}
+                <div
+                    class="
                     flex
                     min-w-0
                     items-center
                     gap-3
-                "
-            >
+                ">
 
 
-                {{-- BUTTON MENU MOBILE --}}
-                <button
-                    type="button"
-
-                    @click="sidebarOpen = true"
-
-                    class="
+                    {{-- BUTTON MENU MOBILE --}}
+                    <button type="button" @click="sidebarOpen = true"
+                        class="
                         flex
                         h-11
                         w-11
@@ -170,69 +140,54 @@
 
                         lg:hidden
                     "
+                        aria-label="Buka menu">
 
-                    aria-label="Buka menu"
-                >
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 
-                    <svg
-                        class="h-6 w-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
 
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16"
-                        />
+                        </svg>
 
-                    </svg>
-
-                </button>
+                    </button>
 
 
 
-                {{-- BRAND MOBILE --}}
-                <div class="min-w-0 md:hidden">
+                    {{-- BRAND MOBILE --}}
+                    <div class="min-w-0 md:hidden">
 
-                    <p
-                        class="
+                        <p
+                            class="
                             truncate
                             text-sm
                             font-bold
                             text-gray-800
-                        "
-                    >
-                        RT System
-                    </p>
+                        ">
+                            RT System
+                        </p>
 
-                    <p
-                        class="
+                        <p
+                            class="
                             truncate
                             text-xs
                             text-gray-500
-                        "
-                    >
-                        Sistem Informasi RT
-                    </p>
+                        ">
+                            Sistem Informasi RT
+                        </p>
 
-                </div>
-
+                    </div>
 
 
-                {{-- SEARCH DESKTOP --}}
-                <div
-                    class="
+
+                    {{-- SEARCH DESKTOP --}}
+                    <div
+                        class="
                         relative
                         hidden
                         md:block
-                    "
-                >
+                    ">
 
-                    <svg
-                        class="
+                        <svg class="
                             absolute
                             left-3
                             top-1/2
@@ -244,28 +199,16 @@
 
                             text-gray-400
                         "
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
 
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" />
 
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"
-                        />
-
-                    </svg>
+                        </svg>
 
 
-                    <input
-                        type="text"
-
-                        placeholder="Cari..."
-
-                        class="
+                        <input type="text" placeholder="Cari..."
+                            class="
                             h-11
                             w-56
 
@@ -287,33 +230,29 @@
                             focus:ring-blue-100
 
                             lg:w-72
-                        "
-                    >
+                        ">
+
+                    </div>
 
                 </div>
 
-            </div>
 
 
-
-            {{-- KANAN --}}
-            <div
-                class="
+                {{-- KANAN --}}
+                <div
+                    class="
                     flex
                     min-w-0
                     items-center
                     gap-1
 
                     sm:gap-3
-                "
-            >
+                ">
 
 
-                {{-- NOTIFICATION --}}
-                <button
-                    type="button"
-
-                    class="
+                    {{-- NOTIFICATION --}}
+                    <button type="button"
+                        class="
                         flex
                         h-11
                         w-11
@@ -330,46 +269,34 @@
                         hover:bg-gray-100
                         hover:text-gray-700
                     "
+                        aria-label="Notifikasi">
 
-                    aria-label="Notifikasi"
-                >
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 
-                    <svg
-                        class="h-6 w-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9" />
 
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9"
-                        />
+                        </svg>
 
-                    </svg>
-
-                </button>
+                    </button>
 
 
 
-                {{-- PROFILE --}}
-                <div
-                    class="
+                    {{-- PROFILE --}}
+                    <div
+                        class="
                         flex
                         min-w-0
                         items-center
                         gap-2
 
                         sm:gap-3
-                    "
-                >
+                    ">
 
 
-                    {{-- AVATAR --}}
-                    <div
-                        class="
+                        {{-- AVATAR --}}
+                        <div
+                            class="
                             flex
                             h-10
                             w-10
@@ -384,20 +311,19 @@
                             text-sm
                             font-bold
                             text-white
-                        "
-                    >
+                        ">
 
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
 
-                    </div>
-
+                        </div>
 
 
-                    {{-- NAME --}}
-                    <div class="hidden min-w-0 sm:block">
 
-                        <p
-                            class="
+                        {{-- NAME --}}
+                        <div class="hidden min-w-0 sm:block">
+
+                            <p
+                                class="
                                 max-w-40
                                 truncate
 
@@ -406,16 +332,15 @@
                                 text-gray-800
 
                                 lg:max-w-52
-                            "
-                        >
+                            ">
 
-                            {{ Auth::user()->name }}
+                                {{ Auth::user()->name }}
 
-                        </p>
+                            </p>
 
 
-                        <p
-                            class="
+                            <p
+                                class="
                                 max-w-40
                                 truncate
 
@@ -423,29 +348,28 @@
                                 text-gray-500
 
                                 lg:max-w-52
-                            "
-                        >
+                            ">
 
-                            {{ Auth::user()->getRoleNames()->first() ?? 'Pengguna' }}
+                                {{ Auth::user()->getRoleNames()->first() ?? 'Pengguna' }}
 
-                        </p>
+                            </p>
+
+                        </div>
 
                     </div>
 
                 </div>
 
-            </div>
-
-        </header>
+            </header>
 
 
 
-        {{-- ================================================== --}}
-        {{-- PAGE CONTENT --}}
-        {{-- ================================================== --}}
+            {{-- ================================================== --}}
+            {{-- PAGE CONTENT --}}
+            {{-- ================================================== --}}
 
-        <main
-            class="
+            <main
+                class="
                 responsive-content
 
                 w-full
@@ -459,44 +383,41 @@
                 sm:p-5
                 md:p-6
                 lg:p-8
-            "
-        >
+            ">
 
 
-            {{-- HEADER PAGE --}}
-            @isset($header)
-
-                <div
-                    class="
+                {{-- HEADER PAGE --}}
+                @isset($header)
+                    <div
+                        class="
                         mb-4
                         min-w-0
 
                         sm:mb-6
-                    "
-                >
+                    ">
 
-                    {{ $header }}
+                        {{ $header }}
+
+                    </div>
+                @endisset
+
+
+
+                {{-- CONTENT --}}
+                <div class="min-w-0 max-w-full">
+
+                    {{ $slot }}
 
                 </div>
 
-            @endisset
 
+            </main>
 
-
-            {{-- CONTENT --}}
-            <div class="min-w-0 max-w-full">
-
-                {{ $slot }}
-
-            </div>
-
-
-        </main>
+        </div>
 
     </div>
 
-</div>
-
-@stack('scripts')
+    @stack('scripts')
 </body>
+
 </html>
