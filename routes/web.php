@@ -280,6 +280,8 @@ Route::middleware(['auth', 'role:Ketua Block'])->group(function () {
 
     Route::delete('/pengajuan-iuran/{pengajuanIuran}/cancel', [PengajuanIuranController::class, 'cancel'])
         ->name('pengajuan-iuran.cancel');
+    Route::get('/rekap-iuran-blok', [DueController::class, 'myBlockRecap'])->name('dues.my-block');
+    Route::get('/rekap-iuran-blok/export', [DueController::class, 'exportMyBlockRecap'])->name('dues.my-block.export');
 });
 
 Route::middleware(['auth', 'role:Bendahara|Superadmin|Ketua RT|Ketua Block'])->group(function () {

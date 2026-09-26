@@ -1,6 +1,4 @@
-<aside
-    x-cloak
-    :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+<aside x-cloak :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     class="
         fixed
         left-0 top-0
@@ -18,8 +16,7 @@
         lg:w-64
         lg:translate-x-0
         lg:shadow-none
-    "
->
+    ">
 
     {{-- ============================================================= --}}
     {{-- LOGO --}}
@@ -31,8 +28,7 @@
             border-b border-slate-700
             px-4
             sm:px-5
-        "
-    >
+        ">
 
         <div class="flex min-w-0 items-center">
 
@@ -48,8 +44,7 @@
                     font-bold
                     text-white
                     shadow
-                "
-            >
+                ">
                 RT
             </div>
 
@@ -71,9 +66,7 @@
 
 
         {{-- TOMBOL CLOSE MOBILE --}}
-        <button
-            type="button"
-            @click="sidebarOpen = false"
+        <button type="button" @click="sidebarOpen = false"
             class="
                 flex h-10 w-10
                 shrink-0
@@ -85,22 +78,11 @@
                 hover:text-white
                 lg:hidden
             "
-            aria-label="Tutup menu"
-        >
+            aria-label="Tutup menu">
 
-            <svg
-                class="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-            >
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18 18 6M6 6l12 12"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12" />
 
             </svg>
 
@@ -119,8 +101,7 @@
             overscroll-contain
             p-3
             sm:p-4
-        "
-    >
+        ">
 
 
         {{-- ========================================================= --}}
@@ -137,15 +118,12 @@
                     uppercase
                     tracking-wider
                     text-slate-500
-                "
-            >
+                ">
                 Menu Utama
             </p>
 
 
-            <a
-                href="{{ route('dashboard') }}"
-                @click="sidebarOpen = false"
+            <a href="{{ route('dashboard') }}" @click="sidebarOpen = false"
                 class="
                     mb-1
                     flex min-h-11
@@ -157,10 +135,8 @@
 
                     {{ request()->routeIs('dashboard')
                         ? 'bg-blue-600 text-white shadow-sm'
-                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                    }}
-                "
-            >
+                        : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                ">
 
                 <span class="flex w-6 shrink-0 justify-center text-lg">
                     📊
@@ -180,7 +156,6 @@
         {{-- SUPERADMIN --}}
         {{-- ========================================================= --}}
         @role('Superadmin')
-
             {{-- ===================================================== --}}
             {{-- ADMINISTRASI --}}
             {{-- ===================================================== --}}
@@ -195,16 +170,13 @@
                         uppercase
                         tracking-wider
                         text-slate-500
-                    "
-                >
+                    ">
                     Administrasi
                 </p>
 
 
                 {{-- DATA BLOK --}}
-                <a
-                    href="{{ route('blocks.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('blocks.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -215,10 +187,8 @@
 
                         {{ request()->routeIs('blocks.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         🏠
@@ -232,9 +202,7 @@
 
 
                 {{-- DATA KK --}}
-                <a
-                    href="{{ route('households.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('households.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -245,10 +213,8 @@
 
                         {{ request()->routeIs('households.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         👨‍👩‍👧
@@ -262,9 +228,7 @@
 
 
                 {{-- SURAT MASUK --}}
-                <a
-                    href="{{ route('surat-masuk.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('surat-masuk.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -275,10 +239,8 @@
 
                         {{ request()->routeIs('surat-masuk.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         📥
@@ -307,16 +269,13 @@
                         uppercase
                         tracking-wider
                         text-slate-500
-                    "
-                >
+                    ">
                     Keuangan
                 </p>
 
 
                 {{-- TRANSAKSI KAS --}}
-                <a
-                    href="{{ route('cashflow.transactions.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('cashflow.transactions.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -327,10 +286,8 @@
 
                         {{ request()->routeIs('cashflow.transactions.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         💰
@@ -344,9 +301,7 @@
 
 
                 {{-- IURAN KK --}}
-                <a
-                    href="{{ route('cashflow.dues.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('cashflow.dues.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -357,10 +312,8 @@
 
                         {{ request()->routeIs('cashflow.dues.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         💳
@@ -374,9 +327,7 @@
 
 
                 {{-- SUMBER DANA --}}
-                <a
-                    href="{{ route('fund-sources.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('fund-sources.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -387,10 +338,8 @@
 
                         {{ request()->routeIs('fund-sources.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         🏦
@@ -404,9 +353,7 @@
 
 
                 {{-- KATEGORI TRANSAKSI --}}
-                <a
-                    href="{{ route('transaction-categories.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('transaction-categories.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -417,10 +364,8 @@
 
                         {{ request()->routeIs('transaction-categories.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         🏷️
@@ -434,9 +379,7 @@
 
 
                 {{-- LAPORAN KEUANGAN --}}
-                <a
-                    href="{{ route('cashflow.reports.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('cashflow.reports.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -447,10 +390,8 @@
 
                         {{ request()->routeIs('cashflow.reports.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         📊
@@ -463,7 +404,6 @@
                 </a>
 
             </div>
-
         @endrole
 
 
@@ -472,7 +412,6 @@
         {{-- KETUA RT --}}
         {{-- ========================================================= --}}
         @role('Ketua RT')
-
             <div class="mb-6">
 
                 <p
@@ -484,16 +423,13 @@
                         uppercase
                         tracking-wider
                         text-slate-500
-                    "
-                >
+                    ">
                     Monitoring
                 </p>
 
 
                 {{-- DATA BLOK --}}
-                <a
-                    href="{{ route('blocks.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('blocks.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -504,10 +440,8 @@
 
                         {{ request()->routeIs('blocks.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         🏠
@@ -521,9 +455,7 @@
 
 
                 {{-- DATA KK --}}
-                <a
-                    href="{{ route('households.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('households.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -534,10 +466,8 @@
 
                         {{ request()->routeIs('households.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         👨‍👩‍👧
@@ -551,9 +481,7 @@
 
 
                 {{-- KATEGORI TRANSAKSI --}}
-                <a
-                    href="{{ route('transaction-categories.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('transaction-categories.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -564,10 +492,8 @@
 
                         {{ request()->routeIs('transaction-categories.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         🏷️
@@ -581,9 +507,7 @@
 
 
                 {{-- SUMBER DANA --}}
-                <a
-                    href="{{ route('fund-sources.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('fund-sources.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -594,10 +518,8 @@
 
                         {{ request()->routeIs('fund-sources.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         🏦
@@ -610,7 +532,6 @@
                 </a>
 
             </div>
-
         @endrole
 
 
@@ -619,7 +540,6 @@
         {{-- BENDAHARA --}}
         {{-- ========================================================= --}}
         @role('Bendahara')
-
             <div class="mb-6">
 
                 <p
@@ -631,16 +551,13 @@
                         uppercase
                         tracking-wider
                         text-slate-500
-                    "
-                >
+                    ">
                     Keuangan
                 </p>
 
 
                 {{-- DATA KK --}}
-                <a
-                    href="{{ route('households.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('households.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -651,10 +568,8 @@
 
                         {{ request()->routeIs('households.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         👨‍👩‍👧
@@ -668,9 +583,7 @@
 
 
                 {{-- IURAN KK --}}
-                <a
-                    href="{{ route('cashflow.dues.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('cashflow.dues.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -681,10 +594,8 @@
 
                         {{ request()->routeIs('cashflow.dues.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         💳
@@ -698,9 +609,7 @@
 
 
                 {{-- VERIFIKASI IURAN --}}
-                <a
-                    href="{{ route('verifikasi-iuran.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('verifikasi-iuran.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -711,10 +620,8 @@
 
                         {{ request()->routeIs('verifikasi-iuran.index') || request()->routeIs('verifikasi-iuran.show')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         ✅
@@ -727,9 +634,7 @@
                 </a>
 
                 {{-- REKAP IURAN WARGA --}}
-                <a
-                    href="{{ route('verifikasi-iuran.rekap') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('verifikasi-iuran.rekap') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -740,10 +645,8 @@
 
                         {{ request()->routeIs('verifikasi-iuran.rekap')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         📋
@@ -757,9 +660,7 @@
 
 
                 {{-- TRANSAKSI KAS --}}
-                <a
-                    href="{{ route('cashflow.transactions.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('cashflow.transactions.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -770,10 +671,8 @@
 
                         {{ request()->routeIs('cashflow.transactions.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         💰
@@ -787,9 +686,7 @@
 
 
                 {{-- LAPORAN KEUANGAN --}}
-                <a
-                    href="{{ route('cashflow.reports.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('cashflow.reports.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -800,10 +697,8 @@
 
                         {{ request()->routeIs('cashflow.reports.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         📊
@@ -816,7 +711,6 @@
                 </a>
 
             </div>
-
         @endrole
 
 
@@ -825,7 +719,6 @@
         {{-- SEKRETARIS --}}
         {{-- ========================================================= --}}
         @role('Sekretaris')
-
             <div class="mb-6">
 
                 <p
@@ -837,16 +730,13 @@
                         uppercase
                         tracking-wider
                         text-slate-500
-                    "
-                >
+                    ">
                     Administrasi
                 </p>
 
 
                 {{-- SURAT MASUK --}}
-                <a
-                    href="{{ route('surat-masuk.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('surat-masuk.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -857,10 +747,8 @@
 
                         {{ request()->routeIs('surat-masuk.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         📥
@@ -873,7 +761,6 @@
                 </a>
 
             </div>
-
         @endrole
 
 
@@ -882,7 +769,6 @@
         {{-- KETUA BLOCK --}}
         {{-- ========================================================= --}}
         @role('Ketua Block')
-
             <div class="mb-6">
 
                 <p
@@ -894,16 +780,13 @@
                         uppercase
                         tracking-wider
                         text-slate-500
-                    "
-                >
+                    ">
                     Blok Saya
                 </p>
 
 
                 {{-- PENGAJUAN IURAN --}}
-                <a
-                    href="{{ route('pengajuan-iuran.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('pengajuan-iuran.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -914,10 +797,8 @@
 
                         {{ request()->routeIs('pengajuan-iuran.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         💳
@@ -929,8 +810,16 @@
 
                 </a>
 
+                {{-- REKAP IURAN BLOK --}}
+                <a href="{{ route('dues.my-block') }}" @click="sidebarOpen = false"
+                    class="mb-1 flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 transition
+        {{ request()->routeIs('dues.my-block')
+            ? 'bg-blue-600 text-white shadow-sm'
+            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                    <span class="flex w-6 shrink-0 justify-center text-lg">📋</span>
+                    <span class="text-sm font-medium">Rekap Iuran {{ Auth::user()->block?->name ?? 'Blok Saya' }}</span>
+                </a>
             </div>
-
         @endrole
 
 
@@ -939,7 +828,6 @@
         {{-- WARGA --}}
         {{-- ========================================================= --}}
         @role('Warga')
-
             <div class="mb-6">
 
                 <p
@@ -951,16 +839,13 @@
                         uppercase
                         tracking-wider
                         text-slate-500
-                    "
-                >
+                    ">
                     Iuran Saya
                 </p>
 
 
                 {{-- IURAN SAYA --}}
-                <a
-                    href="{{ route('iuran-saya.index') }}"
-                    @click="sidebarOpen = false"
+                <a href="{{ route('iuran-saya.index') }}" @click="sidebarOpen = false"
                     class="
                         mb-1
                         flex min-h-11
@@ -971,10 +856,8 @@
 
                         {{ request()->routeIs('iuran-saya.*')
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }}
-                    "
-                >
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         💳
@@ -987,7 +870,6 @@
                 </a>
 
             </div>
-
         @endrole
 
 
@@ -1006,16 +888,13 @@
                     uppercase
                     tracking-wider
                     text-slate-500
-                "
-            >
+                ">
                 Pengaturan
             </p>
 
 
             {{-- PROFILE --}}
-            <a
-                href="{{ route('profile.edit') }}"
-                @click="sidebarOpen = false"
+            <a href="{{ route('profile.edit') }}" @click="sidebarOpen = false"
                 class="
                     mb-1
                     flex min-h-11
@@ -1026,10 +905,8 @@
 
                     {{ request()->routeIs('profile.*')
                         ? 'bg-blue-600 text-white shadow-sm'
-                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                    }}
-                "
-            >
+                        : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}
+                ">
 
                 <span class="flex w-6 shrink-0 justify-center text-lg">
                     ⚙️
@@ -1043,16 +920,11 @@
 
 
             {{-- LOGOUT --}}
-            <form
-                method="POST"
-                action="{{ route('logout') }}"
-                class="w-full"
-            >
+            <form method="POST" action="{{ route('logout') }}" class="w-full">
 
                 @csrf
 
-                <button
-                    type="submit"
+                <button type="submit"
                     class="
                         flex min-h-11
                         w-full
@@ -1064,8 +936,7 @@
                         transition
                         hover:bg-red-600/20
                         hover:text-red-300
-                    "
-                >
+                    ">
 
                     <span class="flex w-6 shrink-0 justify-center text-lg">
                         🚪

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\DueRecapExport;
 use App\Models\Due;
 use App\Models\FundSource;
 use App\Models\Household;
@@ -10,6 +11,7 @@ use App\Models\Transaction;
 use App\Models\TransactionCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DueController extends Controller
 {
@@ -231,5 +233,66 @@ class DueController extends Controller
         });
 
         return redirect()->route('cashflow.dues.index')->with('success', "Pembayaran iuran KK {$due->household->head_name} berhasil dicatat.");
+    }
+
+    public function myBlockRecap(Request $request)
+    {
+        $user = auth()->user();
+
+        if (! $user->block_id) {
+            abort(403, 'Akun Anda belum terhubung ke blok manapun.');
+        }
+
+        $month = $request->input('month', now()->month);
+        $year = $request->input('year', now()->year);
+
+        $query = Due::with(['household'])
+            ->whereHas('household', fn ($q) => $q->where('block_id', $user->block_id))
+            ->where('month', $month)
+            ->where('year', $year);
+
+        if ($request->filled('household_search')) {
+            $search = trim(explode(' - ', $request->household_search)[0]);
+            $query->whereHas('household', fn ($q) => $q->where('household_number', $search));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $dues = $query->orderBy('household_id')->paginate(50)->withQueryString();
+
+        $households = Household::where('block_id', $user->block_id)->where('is_active', true)->orderBy('household_number')->get();
+
+        $totalKK = $households->count();
+        $totalLunas = Due::whereHas('household', fn ($q) => $q->where('block_id', $user->block_id))
+            ->where('month', $month)->where('year', $year)->where('status', 'Lunas')->count();
+
+        return view('cashflow.dues.my-block', compact('dues', 'month', 'year', 'totalKK', 'totalLunas', 'households'));
+    }
+
+    public function exportMyBlockRecap(Request $request)
+    {
+        $user = auth()->user();
+
+        if (! $user->block_id) {
+            abort(403, 'Akun Anda belum terhubung ke blok manapun.');
+        }
+
+        $householdId = null;
+        if ($request->filled('household_search')) {
+            $search = trim(explode(' - ', $request->household_search)[0]);
+            $householdId = Household::where('household_number', $search)->value('id');
+        }
+
+        $filters = [
+            'block_id' => $user->block_id,
+            'month' => $request->input('month', now()->month),
+            'year' => $request->input('year', now()->year),
+            'household_id' => $householdId,
+            'status' => $request->input('status'),
+        ];
+
+        return Excel::download(new DueRecapExport($filters), 'rekap-iuran-blok-saya.xlsx');
     }
 }
