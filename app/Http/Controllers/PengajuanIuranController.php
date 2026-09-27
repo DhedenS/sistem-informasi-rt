@@ -20,6 +20,7 @@ class PengajuanIuranController extends Controller
 
         $pengajuan = PengajuanIuran::with(['block', 'details.household'])
             ->where('block_id', $user->block_id)
+            ->where('status', 'Menunggu Verifikasi')
             ->latest()
             ->paginate(10);
 

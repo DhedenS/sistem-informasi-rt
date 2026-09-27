@@ -284,11 +284,11 @@
                     <div class="px-6 py-14 text-center">
 
                         <h3 class="text-lg font-semibold text-gray-900">
-                            Belum Ada Pengajuan
+                            Tidak Ada Pengajuan Menunggu
                         </h3>
 
                         <p class="mt-2 text-sm text-gray-500">
-                            Belum ada pengajuan iuran dari blok Anda.
+                            Tidak ada pengajuan iuran dari blok Anda yang sedang menunggu verifikasi Bendahara.
                         </p>
 
                         <a href="{{ route('pengajuan-iuran.create') }}"
