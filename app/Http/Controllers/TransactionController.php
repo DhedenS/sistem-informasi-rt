@@ -83,7 +83,7 @@ class TransactionController extends Controller
             $proofPath = null;
             if ($request->hasFile('proof_file')) {
                 $file = $request->file('proof_file');
-                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
                 $proofPath = $file->storeAs('proofs', $filename, 'public');
             }
 
@@ -128,13 +128,16 @@ class TransactionController extends Controller
 
         DB::transaction(function () use ($request, $validated) {
             $file = $request->file('proof_file');
-            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
             $proofPath = $file->storeAs('proofs', $filename, 'public');
 
             Transaction::create([
                 'transaction_date' => $validated['transaction_date'],
                 'type' => 'keluar',
-                'fund_source_id' => null,
+                'fund_source_id' => FundSource::firstOrCreate(
+                    ['name' => 'Kas RT'],
+                    ['is_active' => true]
+                )->id,
                 'transaction_category_id' => $validated['transaction_category_id'],
                 'amount' => $validated['amount'],
                 'description' => $validated['description'] ?? null,
@@ -149,6 +152,7 @@ class TransactionController extends Controller
     public function show(Transaction $transaction)
     {
         $transaction->load(['fundSource', 'category', 'household.block', 'user', 'due']);
+
         return view('cashflow.transactions.show', compact('transaction'));
     }
 

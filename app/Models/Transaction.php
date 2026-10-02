@@ -22,6 +22,31 @@ class Transaction extends Model
         'user_id',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (Transaction $trx) {
+            if ($trx->fund_source_id) {
+                return;
+            }
+
+            if ($trx->type === 'keluar') {
+                $name = 'Kas RT';
+            } elseif (
+                $trx->due_id ||
+                TransactionCategory::where('id', $trx->transaction_category_id)->value('name') === 'Iuran Warga'
+            ) {
+                $name = 'Iuran Warga';
+            } else {
+                return;
+            }
+
+            $trx->fund_source_id = FundSource::firstOrCreate(
+                ['name' => $name],
+                ['is_active' => true]
+            )->id;
+        });
+    }
+
     protected function casts(): array
     {
         return [
