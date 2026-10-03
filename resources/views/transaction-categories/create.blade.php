@@ -11,15 +11,18 @@
 
                     <div class="mb-4">
                         <label class="block mb-1">Nama Kategori</label>
-                        <input type="text" name="name" value="{{ old('name') }}" class="w-full border rounded p-2">
-                        @error('name') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                        <input type="text" name="name" value="{{ old('name') }}"
+                            class="w-full border rounded p-2">
+                        @error('name')
+                            <p class="text-red-600 text-sm">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block mb-1">Tipe</label>
                         <select name="type" class="w-full border rounded p-2">
-                            <option value="masuk">Masuk</option>
-                            <option value="keluar">Keluar</option>
+                            <option value="masuk">Pemasukan</option>
+                            <option value="keluar">Pengeluaran</option>
                         </select>
                     </div>
 

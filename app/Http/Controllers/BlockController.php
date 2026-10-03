@@ -7,9 +7,16 @@ use Illuminate\Http\Request;
 
 class BlockController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $blocks = Block::latest()->paginate(10);
+        $blocks = Block::when($request->filled('search'), function ($query) use ($request) {
+            $query->where('name', 'like', '%'.$request->search.'%')
+                ->orWhere('code', 'like', '%'.$request->search.'%');
+        })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('blocks.index', compact('blocks'));
     }
 
@@ -40,7 +47,7 @@ class BlockController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'nullable|string|max:50|unique:blocks,code,' . $block->id,
+            'code' => 'nullable|string|max:50|unique:blocks,code,'.$block->id,
             'is_active' => 'boolean',
         ]);
 
@@ -52,6 +59,7 @@ class BlockController extends Controller
     public function destroy(Block $block)
     {
         $block->delete();
+
         return redirect()->route('blocks.index')->with('success', 'Blok berhasil dihapus.');
     }
 }

@@ -7,9 +7,16 @@ use Illuminate\Http\Request;
 
 class FundSourceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $fundSources = FundSource::latest()->paginate(10);
+        $fundSources = FundSource::when($request->filled('search'), function ($query) use ($request) {
+            $query->where('name', 'like', '%'.$request->search.'%')
+                ->orWhere('description', 'like', '%'.$request->search.'%');
+        })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('fund-sources.index', compact('fundSources'));
     }
 
@@ -26,7 +33,7 @@ class FundSourceController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        $validated['is_active'] = $request->has('is_active') ? (bool)$request->is_active : true;
+        $validated['is_active'] = $request->has('is_active') ? (bool) $request->is_active : true;
 
         FundSource::create($validated);
 
@@ -46,7 +53,7 @@ class FundSourceController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        $validated['is_active'] = $request->has('is_active') ? (bool)$request->is_active : false;
+        $validated['is_active'] = $request->has('is_active') ? (bool) $request->is_active : false;
 
         $fundSource->update($validated);
 
@@ -60,6 +67,7 @@ class FundSourceController extends Controller
         }
 
         $fundSource->delete();
+
         return redirect()->route('fund-sources.index')->with('success', 'Sumber dana berhasil dihapus.');
     }
 }

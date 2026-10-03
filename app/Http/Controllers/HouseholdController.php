@@ -2,21 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Household;
 use App\Models\Block;
+use App\Models\Household;
 use Illuminate\Http\Request;
 
 class HouseholdController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $households = Household::with('block')->latest()->paginate(10);
+        $households = Household::with('block')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where('household_number', 'like', '%'.$request->search.'%')
+                    ->orWhere('head_name', 'like', '%'.$request->search.'%')
+                    ->orWhereHas('block', function ($q) use ($request) {
+                        $q->where('name', 'like', '%'.$request->search.'%');
+                    });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('households.index', compact('households'));
     }
 
     public function create()
     {
         $blocks = Block::where('is_active', true)->get();
+
         return view('households.create', compact('blocks'));
     }
 
@@ -28,8 +40,9 @@ class HouseholdController extends Controller
             'head_name' => 'required|string|max:255',
             'address' => 'nullable|string',
             'phone' => 'nullable|string|max:20',
-            'is_active' => 'boolean',
         ]);
+
+        $validated['is_active'] = $request->has('is_active');
 
         Household::create($validated);
 
@@ -39,6 +52,7 @@ class HouseholdController extends Controller
     public function edit(Household $household)
     {
         $blocks = Block::where('is_active', true)->get();
+
         return view('households.edit', compact('household', 'blocks'));
     }
 
@@ -50,8 +64,9 @@ class HouseholdController extends Controller
             'head_name' => 'required|string|max:255',
             'address' => 'nullable|string',
             'phone' => 'nullable|string|max:20',
-            'is_active' => 'boolean',
         ]);
+
+        $validated['is_active'] = $request->has('is_active');
 
         $household->update($validated);
 
@@ -61,6 +76,7 @@ class HouseholdController extends Controller
     public function destroy(Household $household)
     {
         $household->delete();
+
         return redirect()->route('households.index')->with('success', 'Data KK berhasil dihapus.');
     }
 }

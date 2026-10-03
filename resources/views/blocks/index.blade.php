@@ -17,6 +17,21 @@
                     + Tambah Blok
                 </a>
 
+                <form action="{{ route('blocks.index') }}" method="GET" class="mb-4 flex gap-2">
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Cari nama atau kode blok..."
+                        class="flex-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    <button type="submit" class="px-4 py-2 bg-gray-800 text-white rounded text-sm hover:bg-gray-900">
+                        Cari
+                    </button>
+                    @if (request('search'))
+                        <a href="{{ route('blocks.index') }}"
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300">
+                            Reset
+                        </a>
+                    @endif
+                </form>
+
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b">
@@ -33,12 +48,21 @@
                                 <td class="py-2">{{ $block->code }}</td>
                                 <td class="py-2">{{ $block->is_active ? 'Aktif' : 'Nonaktif' }}</td>
                                 <td class="py-2">
-                                    <a href="{{ route('blocks.edit', $block) }}" class="text-blue-600 mr-2">Edit</a>
-                                    <form action="{{ route('blocks.destroy', $block) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600">Hapus</button>
-                                    </form>
+                                    <div class="flex items-center gap-2">
+                                        <a href="{{ route('blocks.edit', $block) }}"
+                                            class="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-md text-xs font-semibold hover:bg-blue-200 transition">
+                                            Edit
+                                        </a>
+                                        <form action="{{ route('blocks.destroy', $block) }}" method="POST"
+                                            onsubmit="return confirm('Yakin hapus blok ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="px-3 py-1.5 bg-red-100 text-red-700 rounded-md text-xs font-semibold hover:bg-red-200 transition">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

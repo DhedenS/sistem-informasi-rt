@@ -7,9 +7,18 @@ use Illuminate\Http\Request;
 
 class TransactionCategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = TransactionCategory::latest()->paginate(10);
+        $categories = TransactionCategory::when($request->filled('search'), function ($query) use ($request) {
+            $query->where('name', 'like', '%'.$request->search.'%');
+        })
+            ->when($request->filled('type'), function ($query) use ($request) {
+                $query->where('type', $request->type);
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('transaction-categories.index', compact('categories'));
     }
 
@@ -52,6 +61,7 @@ class TransactionCategoryController extends Controller
     public function destroy(TransactionCategory $transactionCategory)
     {
         $transactionCategory->delete();
+
         return redirect()->route('transaction-categories.index')->with('success', 'Kategori berhasil dihapus.');
     }
 }

@@ -54,7 +54,10 @@ class TransactionController extends Controller
 
     public function createIncome()
     {
-        $fundSources = FundSource::where('is_active', true)->get();
+        $fundSources = FundSource::where('is_active', true)
+            ->where('name', '!=', 'Kas RT')
+            ->get();
+
         $categories = TransactionCategory::where('type', 'masuk')->where('is_active', true)->get();
         $households = Household::where('is_active', true)->with('block')->get();
 

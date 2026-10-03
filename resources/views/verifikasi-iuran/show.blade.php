@@ -490,30 +490,24 @@
                             {{-- Uang Diterima --}}
                             <div class="mb-5">
 
-                                <label for="uang_diterima"
-                                    class="block text-sm font-semibold
-                                              text-gray-700 mb-2">
-
+                                <label for="uang_diterima_display"
+                                    class="block text-sm font-semibold text-gray-700 mb-2">
                                     Uang Diterima Bendahara
-
                                 </label>
 
                                 <div class="relative">
 
-                                    <span
-                                        class="absolute left-3 top-1/2
-                                                 -translate-y-1/2
-                                                 text-gray-500 font-medium">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
                                         Rp
                                     </span>
 
-                                    <input type="number" name="uang_diterima" id="uang_diterima"
-                                        value="{{ old('uang_diterima') }}" min="0" step="1" required
-                                        class="w-full pl-12 pr-4 py-3
-                                        rounded-lg border-gray-300
-                                        focus:border-blue-500
-                                        focus:ring-blue-500"
-                                        placeholder="Contoh: {{ $totalHouseholdsAktif * $pengajuanIuran->nominal_per_kk }}">
+                                    <input type="text" id="uang_diterima_display" inputmode="numeric"
+                                        class="w-full pl-12 pr-4 py-3 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                        placeholder="Contoh: {{ number_format($totalHouseholdsAktif * $pengajuanIuran->nominal_per_kk, 0, ',', '.') }}">
+
+                                    <input type="hidden" name="uang_diterima" id="uang_diterima"
+                                        value="{{ old('uang_diterima') }}" required>
+
                                 </div>
                                 @error('uang_diterima')
                                     <p class="mt-2 text-sm text-red-600">
@@ -522,7 +516,6 @@
                                 @enderror
 
                             </div>
-
 
                             {{-- Status Perbandingan --}}
                             <div id="status-perbandingan" class="hidden rounded-lg p-4 mb-5">
@@ -648,7 +641,8 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
 
-                const input = document.getElementById('uang_diterima');
+                const uangDisplay = document.getElementById('uang_diterima_display');
+                const uangHidden = document.getElementById('uang_diterima');
                 const button = document.getElementById('btn-approve');
                 const statusBox = document.getElementById('status-perbandingan');
                 const statusText = document.getElementById('status-text');
@@ -662,31 +656,24 @@
                     return new Intl.NumberFormat('id-ID').format(angka);
                 }
 
+                function formatRibuanUang(angka) {
+                    return angka.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                }
+
                 function resetButton() {
-
                     button.disabled = true;
-
-                    button.classList.remove(
-                        'bg-green-600',
-                        'hover:bg-green-700'
-                    );
-
-                    button.classList.add(
-                        'bg-gray-400',
-                        'cursor-not-allowed'
-                    );
+                    button.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    button.classList.add('bg-gray-400', 'cursor-not-allowed');
                 }
 
                 function cekUang() {
 
-                    const uangDiterima = Number(input.value);
+                    const uangDiterima = Number(uangHidden.value);
 
                     resetButton();
 
-                    if (!input.value) {
-
+                    if (!uangHidden.value) {
                         statusBox.classList.add('hidden');
-
                         return;
                     }
 
@@ -694,70 +681,47 @@
 
                     if (uangDiterima === totalSistem) {
 
-                        {{-- =============================== --}}
-                        {{-- NOMINAL SESUAI --}}
-                        {{-- =============================== --}}
-
                         statusBox.className =
                             'rounded-lg p-4 mb-5 bg-green-50 border border-green-200 text-green-800';
 
-                        statusText.textContent =
-                            '✓ Jumlah uang sesuai';
+                        statusText.textContent = '✓ Jumlah uang sesuai';
 
                         statusDetail.textContent =
                             'Uang diterima sama dengan total iuran sistem: Rp ' +
                             formatRupiah(totalSistem);
 
                         button.disabled = false;
-
-                        button.classList.remove(
-                            'bg-gray-400',
-                            'cursor-not-allowed'
-                        );
-
-                        button.classList.add(
-                            'bg-green-600',
-                            'hover:bg-green-700',
-                            'cursor-pointer'
-                        );
+                        button.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                        button.classList.add('bg-green-600', 'hover:bg-green-700', 'cursor-pointer');
 
                     } else {
-
-                        {{-- =============================== --}}
-                        {{-- NOMINAL TIDAK SESUAI --}}
-                        {{-- =============================== --}}
 
                         statusBox.className =
                             'rounded-lg p-4 mb-5 bg-red-50 border border-red-200 text-red-800';
 
-                        statusText.textContent =
-                            '✕ Jumlah uang tidak sesuai';
+                        statusText.textContent = '✕ Jumlah uang tidak sesuai';
 
                         if (uangDiterima < totalSistem) {
-
                             statusDetail.textContent =
-                                'Uang diterima kurang Rp ' +
-                                formatRupiah(
-                                    totalSistem - uangDiterima
-                                );
-
+                                'Uang diterima kurang Rp ' + formatRupiah(totalSistem - uangDiterima);
                         } else {
-
                             statusDetail.textContent =
-                                'Uang diterima lebih Rp ' +
-                                formatRupiah(
-                                    uangDiterima - totalSistem
-                                );
-
+                                'Uang diterima lebih Rp ' + formatRupiah(uangDiterima - totalSistem);
                         }
 
                     }
                 }
 
-                input.addEventListener(
-                    'input',
-                    cekUang
-                );
+                uangDisplay.addEventListener('input', function() {
+                    const raw = this.value.replace(/\D/g, '');
+                    this.value = formatRibuanUang(this.value);
+                    uangHidden.value = raw;
+                    cekUang();
+                });
+
+                if (uangHidden.value) {
+                    uangDisplay.value = formatRibuanUang(uangHidden.value);
+                }
 
                 cekUang();
 

@@ -12,20 +12,24 @@
 
                     <div class="mb-4">
                         <label class="block mb-1">Nama Kategori</label>
-                        <input type="text" name="name" value="{{ old('name', $transactionCategory->name) }}" class="w-full border rounded p-2">
+                        <input type="text" name="name" value="{{ old('name', $transactionCategory->name) }}"
+                            class="w-full border rounded p-2">
                     </div>
 
                     <div class="mb-4">
                         <label class="block mb-1">Tipe</label>
                         <select name="type" class="w-full border rounded p-2">
-                            <option value="masuk" {{ $transactionCategory->type == 'masuk' ? 'selected' : '' }}>Masuk</option>
-                            <option value="keluar" {{ $transactionCategory->type == 'keluar' ? 'selected' : '' }}>Keluar</option>
+                            <option value="masuk" {{ $transactionCategory->type == 'masuk' ? 'selected' : '' }}>
+                                Pemasukan</option>
+                            <option value="keluar" {{ $transactionCategory->type == 'keluar' ? 'selected' : '' }}>
+                                Pengeluaran</option>
                         </select>
                     </div>
 
                     <div class="mb-4">
                         <label>
-                            <input type="checkbox" name="is_active" value="1" {{ $transactionCategory->is_active ? 'checked' : '' }}> Aktif
+                            <input type="checkbox" name="is_active" value="1"
+                                {{ $transactionCategory->is_active ? 'checked' : '' }}> Aktif
                         </label>
                     </div>
 
