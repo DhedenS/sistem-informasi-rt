@@ -55,7 +55,7 @@ class TransactionController extends Controller
     public function createIncome()
     {
         $fundSources = FundSource::where('is_active', true)
-            ->where('name', '!=', 'Kas RT')
+            ->whereNotIn('name', ['Kas RT', 'Iuran Warga'])
             ->get();
 
         $categories = TransactionCategory::where('type', 'masuk')->where('is_active', true)->get();

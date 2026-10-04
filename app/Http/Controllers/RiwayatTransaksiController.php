@@ -15,7 +15,12 @@ class RiwayatTransaksiController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
 
-            $query->where('description', 'like', '%' . $search . '%');
+            $query->where(function ($q) use ($search) {
+                $q->where('description', 'like', '%'.$search.'%')
+                    ->orWhereHas('category', function ($q2) use ($search) {
+                        $q2->where('name', 'like', '%'.$search.'%');
+                    });
+            });
         }
 
         // Filter berdasarkan jenis transaksi
