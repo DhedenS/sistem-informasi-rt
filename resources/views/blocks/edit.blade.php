@@ -12,19 +12,40 @@
 
                     <div class="mb-4">
                         <label class="block mb-1">Nama Blok</label>
-                        <input type="text" name="name" value="{{ old('name', $block->name) }}" class="w-full border rounded p-2">
-                        @error('name') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                        <input type="text" name="name" value="{{ old('name', $block->name) }}"
+                            class="w-full border rounded p-2">
+                        @error('name')
+                            <p class="text-red-600 text-sm">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block mb-1">Kode</label>
-                        <input type="text" name="code" value="{{ old('code', $block->code) }}" class="w-full border rounded p-2">
-                        @error('code') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                        <input type="text" name="code" value="{{ old('code', $block->code) }}"
+                            class="w-full border rounded p-2">
+                        @error('code')
+                            <p class="text-red-600 text-sm">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block mb-1">Ketua Blok</label>
+                        <select name="ketua_user_id" class="w-full border rounded p-2">
+                            <option value="">-- Belum ada ketua --</option>
+                            @foreach ($candidates as $user)
+                                <option value="{{ $user->id }}"
+                                    {{ old('ketua_user_id', $ketuaSekarang?->id) == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }} ({{ $user->household->household_number ?? '-' }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Memilih ketua baru otomatis mencopot ketua lama.</p>
                     </div>
 
                     <div class="mb-4">
                         <label>
-                            <input type="checkbox" name="is_active" value="1" {{ $block->is_active ? 'checked' : '' }}> Aktif
+                            <input type="checkbox" name="is_active" value="1"
+                                {{ $block->is_active ? 'checked' : '' }}> Aktif
                         </label>
                     </div>
 

@@ -37,6 +37,7 @@
                         <tr class="border-b">
                             <th class="py-2">Nama</th>
                             <th class="py-2">Kode</th>
+                            <th class="py-2">Ketua Blok</th>
                             <th class="py-2">Status</th>
                             <th class="py-2">Aksi</th>
                         </tr>
@@ -46,7 +47,16 @@
                             <tr class="border-b">
                                 <td class="py-2">{{ $block->name }}</td>
                                 <td class="py-2">{{ $block->code }}</td>
-                                <td class="py-2">{{ $block->is_active ? 'Aktif' : 'Nonaktif' }}</td>
+                                <td class="py-2">{{ $block->ketuaBlok->name ?? '-' }}</td>
+                                <td class="py-2">
+                                    @if ($block->is_active)
+                                        <span
+                                            class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Aktif</span>
+                                    @else
+                                        <span
+                                            class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Nonaktif</span>
+                                    @endif
+                                </td>
                                 <td class="py-2">
                                     <div class="flex items-center gap-2">
                                         <a href="{{ route('blocks.edit', $block) }}"

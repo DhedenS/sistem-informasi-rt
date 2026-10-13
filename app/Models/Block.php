@@ -12,4 +12,9 @@ class Block extends Model
     {
         return $this->hasMany(Household::class);
     }
+
+    public function ketuaBlok()
+    {
+        return $this->hasOne(User::class)->role('Ketua Block');
+    }
 }
