@@ -18,6 +18,33 @@ class DueController extends Controller
     public function index(Request $request)
     {
         if ($request->filled('block_id') || $request->filled('household_id')) {
+
+            $month = $request->filled('month') ? (int) $request->input('month') : now()->month;
+            $year = $request->filled('year') ? (int) $request->input('year') : now()->year;
+
+            // Buat baris "Belum Lunas" untuk KK aktif yang belum punya data periode ini
+            $householdsToSync = Household::where('is_active', true)
+                ->when($request->filled('block_id'), fn ($q) => $q->where('block_id', $request->block_id))
+                ->when($request->filled('household_id'), fn ($q) => $q->where('id', $request->household_id))
+                ->get();
+
+            $nominal = IuranRate::getRateFor($month, $year);
+
+            foreach ($householdsToSync as $hh) {
+                Due::firstOrCreate(
+                    [
+                        'household_id' => $hh->id,
+                        'month' => $month,
+                        'year' => $year,
+                    ],
+                    [
+                        'amount' => $nominal,
+                        'paid_amount' => 0,
+                        'status' => 'Belum Lunas',
+                    ]
+                );
+            }
+
             $query = Due::with(['household.block', 'transaction']);
 
             if ($request->filled('household_id')) {
@@ -37,15 +64,12 @@ class DueController extends Controller
             }
 
             $dues = $query->orderBy('year', 'desc')->orderBy('month', 'desc')->paginate(50)->withQueryString();
+
             $households = Household::where('is_active', true)
                 ->when($request->filled('block_id'), fn ($q) => $q->where('block_id', $request->block_id))
                 ->with('block')
                 ->get();
 
-            $month = $request->filled('month') ? $request->input('month') : now()->month;
-            $year = $request->filled('year') ? $request->input('year') : now()->year;
-
-            // Tambahkan ini:
             $summary = DB::table('blocks')
                 ->leftJoin('households', 'households.block_id', '=', 'blocks.id')
                 ->leftJoin('dues', function ($join) use ($month, $year) {
@@ -89,7 +113,6 @@ class DueController extends Controller
             )
             ->groupBy('blocks.id', 'blocks.name');
 
-        // TAMBAHKAN INI
         if ($request->filled('filter_block')) {
             $summaryQuery->where('blocks.id', $request->filter_block);
         }
@@ -102,7 +125,6 @@ class DueController extends Controller
         $totalTerkumpul = $summary->sum('total_terkumpul');
         $persentaseLunas = $totalKK > 0 ? round(($totalLunas / $totalKK) * 100, 1) : 0;
 
-        // TAMBAHKAN INI
         $blocks = DB::table('blocks')->orderBy('name')->get();
 
         $households = Household::where('is_active', true)->with('block')->get();
@@ -115,7 +137,6 @@ class DueController extends Controller
             ->paginate(50)
             ->withQueryString();
 
-        // GANTI baris return-nya, tambahkan 'blocks'
         return view('cashflow.dues.index', compact(
             'summary', 'month', 'year', 'households', 'dues', 'blocks',
             'totalKK', 'totalLunas', 'totalBelumBayar', 'totalTerkumpul', 'persentaseLunas'

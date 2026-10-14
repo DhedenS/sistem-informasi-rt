@@ -169,6 +169,12 @@
                             {{ $pengajuanIuran->details->count() }} dari {{ $totalHouseholdsAktif }} KK aktif
                         </p>
 
+                        @if ($sudahLunasLain > 0)
+                            <p class="mt-1 text-sm font-medium text-green-700">
+                                ✓ {{ $sudahLunasLain }} KK sudah lunas lewat pengajuan lain
+                            </p>
+                        @endif
+
                         @if ($kkBelumBayar > 0)
                             <p class="mt-1 text-sm font-medium text-yellow-700">
                                 ⚠ {{ $kkBelumBayar }} KK belum membayar
@@ -503,7 +509,7 @@
 
                                     <input type="text" id="uang_diterima_display" inputmode="numeric"
                                         class="w-full pl-12 pr-4 py-3 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                                        placeholder="Contoh: {{ number_format($totalHouseholdsAktif * $pengajuanIuran->nominal_per_kk, 0, ',', '.') }}">
+                                        placeholder="Contoh: {{ number_format($pengajuanIuran->total_iuran, 0, ',', '.') }}">
 
                                     <input type="hidden" name="uang_diterima" id="uang_diterima"
                                         value="{{ old('uang_diterima') }}" required>

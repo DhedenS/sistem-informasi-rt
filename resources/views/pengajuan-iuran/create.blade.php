@@ -160,7 +160,7 @@
                     <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 
                         @foreach ($households as $household)
-                            <label
+                            <label data-household-id="{{ $household->id }}"
                                 class="household-card flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-4 transition hover:bg-gray-50">
 
                                 <input type="checkbox" name="household_ids[]" value="{{ $household->id }}"
@@ -181,7 +181,11 @@
 
                             </label>
                         @endforeach
+                    </div>
 
+                    <div id="semuaLunas"
+                        class="mt-5 hidden rounded-xl border border-dashed border-green-300 bg-green-50 p-6 text-center text-sm font-medium text-green-700">
+                        ✅ Semua KK sudah membayar iuran untuk periode ini.
                     </div>
 
                 </div>
@@ -226,7 +230,7 @@
                                 KK Belum Bayar
                             </p>
                             <p id="belumBayar" class="mt-1 text-2xl font-bold text-yellow-800">
-                                {{ $totalHouseholds }} KK
+                                0 KK
                             </p>
                         </div>
 
@@ -290,18 +294,20 @@
     {{-- JavaScript hitung total --}}
     <script>
         const iuranRates = @json($iuranRates->map(fn($r) => ['year' => $r->year, 'month' => $r->month, 'amount' => (float) $r->amount])->values());
+        const paidMap = @json($paidMap);
 
         let nominalPerKK = {{ $nominalPerKK }};
 
         const checkboxes = document.querySelectorAll('.household-checkbox');
+        const cards = document.querySelectorAll('.household-card');
         const jumlahKKElement = document.getElementById('jumlahKK');
         const totalIuranElement = document.getElementById('totalIuran');
-        const selectAllButton = document.getElementById('selectAll');
-        const totalHouseholds = {{ $totalHouseholds }};
         const belumBayarElement = document.getElementById('belumBayar');
+        const selectAllButton = document.getElementById('selectAll');
         const nominalDisplay = document.getElementById('nominalDisplay');
         const bulanSelect = document.getElementById('bulan');
         const tahunSelect = document.getElementById('tahun');
+        const semuaLunas = document.getElementById('semuaLunas');
 
         function formatRupiah(angka) {
             return new Intl.NumberFormat('id-ID').format(angka);
@@ -316,44 +322,57 @@
             return applicable[0].amount;
         }
 
-        function updateNominal() {
+        function visibleCheckboxes() {
+            return [...checkboxes].filter(cb => cb.closest('.household-card').style.display !== 'none');
+        }
+
+        // Sembunyikan KK yang sudah bayar di periode terpilih
+        function filterHouseholds() {
+            const key = tahunSelect.value + '-' + parseInt(bulanSelect.value);
+            const paidIds = (paidMap[key] || []).map(Number);
+
+            cards.forEach(card => {
+                const id = parseInt(card.dataset.householdId);
+                const cb = card.querySelector('.household-checkbox');
+                const sudahBayar = paidIds.includes(id);
+
+                card.style.display = sudahBayar ? 'none' : '';
+                if (sudahBayar) cb.checked = false;
+            });
+
+            semuaLunas.classList.toggle('hidden', visibleCheckboxes().length > 0);
+        }
+
+        function updateTotal() {
+            const visible = visibleCheckboxes();
+            const jumlah = visible.filter(cb => cb.checked).length;
+
+            jumlahKKElement.textContent = jumlah + ' KK';
+            totalIuranElement.textContent = 'Rp ' + formatRupiah(jumlah * nominalPerKK);
+            belumBayarElement.textContent = (visible.length - jumlah) + ' KK';
+        }
+
+        function updatePeriode() {
             const month = parseInt(bulanSelect.value);
             const year = parseInt(tahunSelect.value);
             nominalPerKK = getRateFor(month, year);
             nominalDisplay.textContent = 'Rp ' + formatRupiah(nominalPerKK);
+            filterHouseholds();
             updateTotal();
         }
 
-        function updateTotal() {
-            const selected = document.querySelectorAll('.household-checkbox:checked');
-            const jumlah = selected.length;
-            const total = jumlah * nominalPerKK;
-            const belumBayar = totalHouseholds - jumlah;
-
-            jumlahKKElement.textContent = jumlah + ' KK';
-            totalIuranElement.textContent = 'Rp ' + formatRupiah(total);
-            belumBayarElement.textContent = belumBayar + ' KK';
-        }
-
-        checkboxes.forEach(function(checkbox) {
-            checkbox.addEventListener('change', updateTotal);
-        });
-
-        bulanSelect.addEventListener('change', updateNominal);
-        tahunSelect.addEventListener('change', updateNominal);
+        checkboxes.forEach(cb => cb.addEventListener('change', updateTotal));
+        bulanSelect.addEventListener('change', updatePeriode);
+        tahunSelect.addEventListener('change', updatePeriode);
 
         selectAllButton.addEventListener('click', function() {
-            const allChecked =
-                document.querySelectorAll('.household-checkbox:checked').length === checkboxes.length;
-
-            checkboxes.forEach(function(checkbox) {
-                checkbox.checked = !allChecked;
-            });
-
+            const visible = visibleCheckboxes();
+            const allChecked = visible.length > 0 && visible.every(cb => cb.checked);
+            visible.forEach(cb => cb.checked = !allChecked);
             updateTotal();
         });
 
-        updateNominal();
+        updatePeriode();
     </script>
 
 </x-app-layout>

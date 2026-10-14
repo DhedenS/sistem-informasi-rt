@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Block;
 use App\Models\Due;
 use App\Models\Household;
-use App\Models\Transaction;
 use App\Models\SuratMasuk;
+use App\Models\Transaction;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -45,20 +45,21 @@ class DashboardController extends Controller
         for ($i = 5; $i >= 0; $i--) {
             $bulan = Carbon::now()->subMonths($i);
 
-            $masuk = Transaction::where('type', 'masuk')
+            $masukQ = Transaction::where('type', 'masuk')
                 ->whereMonth('transaction_date', $bulan->month)
-                ->whereYear('transaction_date', $bulan->year)
-                ->sum('amount');
+                ->whereYear('transaction_date', $bulan->year);
 
-            $keluar = Transaction::where('type', 'keluar')
+            $keluarQ = Transaction::where('type', 'keluar')
                 ->whereMonth('transaction_date', $bulan->month)
-                ->whereYear('transaction_date', $bulan->year)
-                ->sum('amount');
+                ->whereYear('transaction_date', $bulan->year);
 
             $cashflowData[] = [
                 'label' => $bulan->translatedFormat('M'),
-                'masuk' => $masuk,
-                'keluar' => $keluar,
+                'nama_bulan' => $bulan->translatedFormat('F Y'),
+                'masuk' => (clone $masukQ)->sum('amount'),
+                'keluar' => (clone $keluarQ)->sum('amount'),
+                'masuk_count' => (clone $masukQ)->count(),
+                'keluar_count' => (clone $keluarQ)->count(),
             ];
         }
 

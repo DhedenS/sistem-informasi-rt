@@ -104,7 +104,6 @@
                                 <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase">Jumlah</th>
                                 <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase">Status</th>
                                 <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase">Tgl Bayar</th>
-                                <th class="py-3 px-4 text-xs font-medium text-gray-500 uppercase text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -130,23 +129,6 @@
                                     </td>
                                     <td class="py-3 px-4 text-sm text-gray-700">
                                         {{ $due->payment_date ? \Carbon\Carbon::parse($due->payment_date)->format('d/m/Y') : '-' }}
-                                    </td>
-                                    <td class="py-3 px-4 text-sm text-right">
-                                        @if ($due->status !== 'Lunas')
-                                            <form action="{{ route('cashflow.dues.pay', $due->id) }}" method="POST"
-                                                class="inline"
-                                                onsubmit="return confirm('Tandai iuran {{ $due->household->head_name }} sebagai Lunas?');">
-                                                @csrf
-                                                <input type="hidden" name="payment_date"
-                                                    value="{{ now()->toDateString() }}">
-                                                <button type="submit"
-                                                    class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-semibold shadow-sm">
-                                                    Tandai Lunas
-                                                </button>
-                                            </form>
-                                        @else
-                                            <span class="text-xs text-gray-400">Sudah Lunas</span>
-                                        @endif
                                     </td>
                                 </tr>
                             @empty
@@ -208,22 +190,6 @@
                                     </span>
                                 </div>
 
-                                <div class="pt-2">
-                                    @if ($due->status !== 'Lunas')
-                                        <form action="{{ route('cashflow.dues.pay', $due->id) }}" method="POST"
-                                            onsubmit="return confirm('Tandai iuran {{ $due->household->head_name }} sebagai Lunas?');">
-                                            @csrf
-                                            <input type="hidden" name="payment_date"
-                                                value="{{ now()->toDateString() }}">
-                                            <button type="submit"
-                                                class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm">
-                                                Tandai Lunas
-                                            </button>
-                                        </form>
-                                    @else
-                                        <p class="text-center text-xs text-gray-400">Sudah Lunas</p>
-                                    @endif
-                                </div>
                             </div>
 
                         </details>

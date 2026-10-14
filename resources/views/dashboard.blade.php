@@ -27,8 +27,7 @@
             gap-2.5
             sm:gap-4
             xl:gap-5
-        "
-    >
+        ">
 
         {{-- TOTAL KK --}}
         <div
@@ -43,8 +42,7 @@
                 sm:rounded-2xl
                 sm:p-4
                 lg:p-5
-            "
-        >
+            ">
             <div class="flex h-full items-center justify-between gap-2 sm:gap-4">
 
                 <div class="min-w-0">
@@ -79,8 +77,7 @@
                         lg:h-12
                         lg:w-12
                         lg:text-2xl
-                    "
-                >
+                    ">
                     👨‍👩‍👧‍👦
                 </div>
 
@@ -100,8 +97,7 @@
                 sm:rounded-2xl
                 sm:p-4
                 lg:p-5
-            "
-        >
+            ">
             <div class="flex h-full items-center justify-between gap-2 sm:gap-4">
 
                 <div class="min-w-0">
@@ -136,8 +132,7 @@
                         lg:h-12
                         lg:w-12
                         lg:text-2xl
-                    "
-                >
+                    ">
                     📄
                 </div>
 
@@ -157,8 +152,7 @@
                 sm:rounded-2xl
                 sm:p-4
                 lg:p-5
-            "
-        >
+            ">
             <div class="flex h-full items-center justify-between gap-2 sm:gap-4">
 
                 <div class="min-w-0">
@@ -166,8 +160,7 @@
                         Saldo Kas
                     </p>
 
-                    <p
-                        class="
+                    <p class="
                             mt-0.5
                             truncate
                             text-base
@@ -177,8 +170,7 @@
                             sm:text-xl
                             lg:text-2xl
                         "
-                        title="Rp {{ number_format($saldoKas, 0, ',', '.') }}"
-                    >
+                        title="Rp {{ number_format($saldoKas, 0, ',', '.') }}">
                         Rp {{ number_format($saldoKas, 0, ',', '.') }}
                     </p>
 
@@ -205,8 +197,7 @@
                         lg:h-12
                         lg:w-12
                         lg:text-2xl
-                    "
-                >
+                    ">
                     💰
                 </div>
 
@@ -226,8 +217,7 @@
                 sm:rounded-2xl
                 sm:p-4
                 lg:p-5
-            "
-        >
+            ">
             <div class="flex h-full items-center justify-between gap-2 sm:gap-4">
 
                 <div class="min-w-0">
@@ -262,8 +252,7 @@
                         lg:h-12
                         lg:w-12
                         lg:text-2xl
-                    "
-                >
+                    ">
                     🏘️
                 </div>
 
@@ -284,8 +273,7 @@
             gap-4
             xl:grid-cols-2
             xl:gap-6
-        "
-    >
+        ">
 
         {{-- ===================================================== --}}
         {{-- GRAFIK CASHFLOW --}}
@@ -299,8 +287,7 @@
                 bg-white
                 shadow-sm
                 sm:rounded-2xl
-            "
-        >
+            ">
 
             <div class="p-3 sm:p-5 lg:p-6">
 
@@ -314,8 +301,7 @@
                         gap-2
                         sm:mb-5
                         sm:items-center
-                    "
-                >
+                    ">
 
                     <div class="min-w-0">
                         <h2 class="text-base font-bold text-gray-900 sm:text-lg">
@@ -328,8 +314,7 @@
                     </div>
 
 
-                    <button
-                        type="button"
+                    <button type="button"
                         class="
                             inline-flex
                             min-h-0
@@ -350,8 +335,7 @@
                             sm:px-4
                             sm:py-2
                             sm:text-sm
-                        "
-                    >
+                        ">
                         6 Bulan
                     </button>
 
@@ -383,60 +367,96 @@
                 {{-- ================================================= --}}
                 {{-- GRAFIK --}}
                 {{-- ================================================= --}}
-                <div class="cashflow-chart">
+                <div x-data="{ active: null }" @click.outside="active = null">
 
-                    @foreach ($cashflowData as $item)
+                    {{-- PANEL INFO (horizontal, di atas grafik) --}}
+                    <div class="mb-3 min-h-[40px] sm:mb-4 sm:min-h-[44px]">
 
-                        @php
-                            $tinggiMasuk =
-                                ($maxValue ?? 0) > 0 && $item['masuk'] > 0
-                                    ? max(($item['masuk'] / $maxValue) * 100, 4)
-                                    : 0;
+                        @foreach ($cashflowData as $item)
+                            {{-- INFO PEMASUKAN --}}
+                            <div x-cloak x-show="active === 'm{{ $loop->index }}'" x-transition.opacity
+                                class="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2">
+                                <span class="h-2.5 w-2.5 shrink-0 rounded-full bg-blue-500"></span>
 
-                            $tinggiKeluar =
-                                ($maxValue ?? 0) > 0 && $item['keluar'] > 0
-                                    ? max(($item['keluar'] / $maxValue) * 100, 4)
-                                    : 0;
-                        @endphp
+                                <div class="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-0.5">
+                                    <span class="text-xs font-bold text-blue-600">Pemasukan</span>
+                                    <span class="text-[10px] text-gray-500 sm:text-xs">{{ $item['nama_bulan'] }}</span>
+                                    <span class="text-xs font-semibold text-gray-900">
+                                        Rp {{ number_format($item['masuk'], 0, ',', '.') }}
+                                    </span>
+                                    <span class="text-[10px] text-gray-500 sm:text-xs">{{ $item['masuk_count'] }}
+                                        transaksi</span>
+                                </div>
 
-
-                        <div class="cashflow-item">
-
-                            {{-- AREA BAR --}}
-                            <div class="cashflow-bar-area">
-
-                                {{-- PEMASUKAN --}}
-                                <div
-                                    class="
-                                        cashflow-bar
-                                        bg-blue-500
-                                    "
-                                    style="height: {{ $tinggiMasuk }}%;"
-                                    title="Pemasukan {{ $item['label'] }}: Rp {{ number_format($item['masuk'], 0, ',', '.') }}"
-                                ></div>
-
-
-                                {{-- PENGELUARAN --}}
-                                <div
-                                    class="
-                                        cashflow-bar
-                                        bg-red-400
-                                    "
-                                    style="height: {{ $tinggiKeluar }}%;"
-                                    title="Pengeluaran {{ $item['label'] }}: Rp {{ number_format($item['keluar'], 0, ',', '.') }}"
-                                ></div>
-
+                                <button type="button" @click="active = null"
+                                    class="shrink-0 rounded-md px-1.5 text-sm leading-none text-gray-400 hover:bg-blue-100 hover:text-gray-600"
+                                    aria-label="Tutup">✕</button>
                             </div>
 
+                            {{-- INFO PENGELUARAN --}}
+                            <div x-cloak x-show="active === 'k{{ $loop->index }}'" x-transition.opacity
+                                class="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2">
+                                <span class="h-2.5 w-2.5 shrink-0 rounded-full bg-red-400"></span>
 
-                            {{-- BULAN --}}
-                            <span class="cashflow-label">
-                                {{ $item['label'] }}
-                            </span>
+                                <div class="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-0.5">
+                                    <span class="text-xs font-bold text-red-500">Pengeluaran</span>
+                                    <span class="text-[10px] text-gray-500 sm:text-xs">{{ $item['nama_bulan'] }}</span>
+                                    <span class="text-xs font-semibold text-gray-900">
+                                        Rp {{ number_format($item['keluar'], 0, ',', '.') }}
+                                    </span>
+                                    <span class="text-[10px] text-gray-500 sm:text-xs">{{ $item['keluar_count'] }}
+                                        transaksi</span>
+                                </div>
 
-                        </div>
+                                <button type="button" @click="active = null"
+                                    class="shrink-0 rounded-md px-1.5 text-sm leading-none text-gray-400 hover:bg-red-100 hover:text-gray-600"
+                                    aria-label="Tutup">✕</button>
+                            </div>
+                        @endforeach
 
-                    @endforeach
+                    </div>
+
+
+                    {{-- BATANG GRAFIK --}}
+                    <div class="cashflow-chart">
+
+                        @foreach ($cashflowData as $item)
+                            @php
+                                $tinggiMasuk =
+                                    ($maxValue ?? 0) > 0 && $item['masuk'] > 0
+                                        ? max(($item['masuk'] / $maxValue) * 100, 4)
+                                        : 0;
+                                $tinggiKeluar =
+                                    ($maxValue ?? 0) > 0 && $item['keluar'] > 0
+                                        ? max(($item['keluar'] / $maxValue) * 100, 4)
+                                        : 0;
+                            @endphp
+
+                            <div class="cashflow-item">
+
+                                <div class="cashflow-bar-area">
+
+                                    {{-- PEMASUKAN --}}
+                                    <div class="cashflow-bar bg-blue-500"
+                                        :class="active === 'm{{ $loop->index }}' ? 'ring-2 ring-blue-300' : ''"
+                                        style="height: {{ $tinggiMasuk }}%;"
+                                        @click="active = active === 'm{{ $loop->index }}' ? null : 'm{{ $loop->index }}'">
+                                    </div>
+
+                                    {{-- PENGELUARAN --}}
+                                    <div class="cashflow-bar bg-red-400"
+                                        :class="active === 'k{{ $loop->index }}' ? 'ring-2 ring-red-300' : ''"
+                                        style="height: {{ $tinggiKeluar }}%;"
+                                        @click="active = active === 'k{{ $loop->index }}' ? null : 'k{{ $loop->index }}'">
+                                    </div>
+
+                                </div>
+
+                                <span class="cashflow-label">{{ $item['label'] }}</span>
+                            </div>
+                        @endforeach
+
+                    </div>
 
                 </div>
 
@@ -456,8 +476,7 @@
                 bg-white
                 shadow-sm
                 sm:rounded-2xl
-            "
-        >
+            ">
 
             <div class="p-3 sm:p-5 lg:p-6">
 
@@ -472,8 +491,7 @@
                         gap-2
                         sm:mb-5
                         sm:gap-3
-                    "
-                >
+                    ">
 
                     <div class="min-w-0">
                         <h2 class="text-base font-bold text-gray-900 sm:text-lg">
@@ -486,8 +504,7 @@
                     </div>
 
 
-                    <a
-                        href="{{ route('riwayat-transaksi.index') }}"
+                    <a href="{{ route('riwayat-transaksi.index') }}"
                         class="
                             shrink-0
                             whitespace-nowrap
@@ -496,8 +513,7 @@
                             text-blue-600
                             hover:text-blue-700
                             sm:text-sm
-                        "
-                    >
+                        ">
                         Lihat Semua →
                     </a>
 
@@ -508,7 +524,6 @@
                 <div class="space-y-2 sm:space-y-3">
 
                     @forelse ($transaksiTerbaru as $trx)
-
                         <div
                             class="
                                 flex
@@ -521,8 +536,7 @@
                                 sm:gap-3
                                 sm:rounded-xl
                                 sm:p-3
-                            "
-                        >
+                            ">
 
                             {{-- ICON --}}
                             <div
@@ -539,12 +553,8 @@
                                     sm:w-10
                                     sm:text-base
 
-                                    {{ $trx->type === 'masuk'
-                                        ? 'bg-green-100'
-                                        : 'bg-red-100'
-                                    }}
-                                "
-                            >
+                                    {{ $trx->type === 'masuk' ? 'bg-green-100' : 'bg-red-100' }}
+                                ">
                                 {{ $trx->type === 'masuk' ? '📥' : '📤' }}
                             </div>
 
@@ -558,8 +568,7 @@
                                         items-start
                                         justify-between
                                         gap-2
-                                    "
-                                >
+                                    ">
 
                                     <p
                                         class="
@@ -569,12 +578,8 @@
                                             font-semibold
                                             text-gray-800
                                             sm:text-sm
-                                        "
-                                    >
-                                        {{ $trx->type === 'masuk'
-                                            ? 'Pemasukan'
-                                            : 'Pengeluaran'
-                                        }}
+                                        ">
+                                        {{ $trx->type === 'masuk' ? 'Pemasukan' : 'Pengeluaran' }}
                                     </p>
 
 
@@ -585,8 +590,7 @@
                                             text-[9px]
                                             text-gray-400
                                             sm:text-xs
-                                        "
-                                    >
+                                        ">
                                         {{ $trx->created_at->diffForHumans() }}
                                     </span>
 
@@ -602,19 +606,14 @@
                                         sm:mt-1
                                         sm:text-sm
 
-                                        {{ $trx->type === 'masuk'
-                                            ? 'text-green-600'
-                                            : 'text-red-600'
-                                        }}
-                                    "
-                                >
+                                        {{ $trx->type === 'masuk' ? 'text-green-600' : 'text-red-600' }}
+                                    ">
                                     {{ $trx->type === 'masuk' ? '+' : '-' }}
                                     Rp {{ number_format($trx->amount, 0, ',', '.') }}
                                 </p>
 
 
                                 @if (!empty($trx->description))
-
                                     <p
                                         class="
                                             mt-0.5
@@ -624,11 +623,9 @@
                                             text-gray-500
                                             sm:mt-1
                                             sm:text-xs
-                                        "
-                                    >
+                                        ">
                                         {{ $trx->description }}
                                     </p>
-
                                 @endif
 
                             </div>
@@ -652,8 +649,7 @@
                                 px-4
                                 text-center
                                 sm:min-h-40
-                            "
-                        >
+                            ">
 
                             <div class="mb-1 text-2xl sm:mb-2 sm:text-3xl">
                                 💰
@@ -668,7 +664,6 @@
                             </p>
 
                         </div>
-
                     @endforelse
 
                 </div>
@@ -684,12 +679,14 @@
     {{-- CSS KHUSUS DASHBOARD --}}
     {{-- ========================================================= --}}
     <style>
-
         /*
         |--------------------------------------------------------------------------
         | STATISTIC GRID
         |--------------------------------------------------------------------------
         */
+        [x-cloak] {
+            display: none !important;
+        }
 
         .dashboard-stat-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -907,7 +904,6 @@
             }
 
         }
-
     </style>
 
 </x-app-layout>

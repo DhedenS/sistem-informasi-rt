@@ -6,6 +6,7 @@ use App\Models\Block;
 use App\Models\Household;
 use App\Models\IuranRate;
 use App\Models\PengajuanIuran;
+use App\Models\PengajuanIuranDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -45,12 +46,25 @@ class PengajuanIuranController extends Controller
             ->get();
 
         $block = Block::find($user->block_id);
-        $nominalPerKK = 30000; // default fallback, akan di-update per periode di view
-        $totalHouseholds = $households->count();
+        $nominalPerKK = 30000;
         $iuranRates = IuranRate::orderBy('year')->orderBy('month')->get();
 
+        // Peta KK yang sudah bayar: ["2026-10" => [1, 2, 5], ...]
+        $statusAktif = ['Menunggu Verifikasi', 'Disetujui'];
+
+        $paidMap = PengajuanIuran::with('details')
+            ->where('block_id', $user->block_id)
+            ->whereIn('status', $statusAktif)
+            ->get()
+            ->groupBy(fn ($p) => $p->tahun.'-'.(int) $p->bulan)
+            ->map(fn ($group) => $group
+                ->flatMap(fn ($p) => $p->details->pluck('household_id'))
+                ->unique()
+                ->values()
+            );
+
         return view('pengajuan-iuran.create', compact(
-            'households', 'block', 'nominalPerKK', 'totalHouseholds', 'iuranRates'
+            'households', 'block', 'nominalPerKK', 'iuranRates', 'paidMap'
         ));
     }
 
@@ -90,18 +104,21 @@ class PengajuanIuranController extends Controller
                 ]);
         }
 
-        // Cegah pengajuan ganda untuk periode yang sudah disetujui
-        $sudahDisetujui = PengajuanIuran::where('block_id', $user->block_id)
-            ->where('bulan', $request->bulan)
-            ->where('tahun', $request->tahun)
-            ->where('status', 'Disetujui')
-            ->exists();
+        // Cegah KK yang sudah diajukan/dibayar untuk periode ini
+        $sudahBayarIds = PengajuanIuranDetail::whereIn('household_id', $request->household_ids)
+            ->whereHas('pengajuanIuran', function ($q) use ($request, $user) {
+                $q->where('block_id', $user->block_id)
+                    ->where('bulan', $request->bulan)
+                    ->where('tahun', $request->tahun)
+                    ->whereIn('status', ['Menunggu Verifikasi', 'Disetujui']);
+            })
+            ->pluck('household_id');
 
-        if ($sudahDisetujui) {
+        if ($sudahBayarIds->isNotEmpty()) {
             return back()
                 ->withInput()
                 ->withErrors([
-                    'bulan' => 'Pengajuan untuk periode ini sudah disetujui sebelumnya. Tidak dapat mengajukan lagi.',
+                    'household_ids' => 'Ada KK yang sudah membayar/diajukan untuk periode ini. Muat ulang halaman.',
                 ]);
         }
 
@@ -113,7 +130,16 @@ class PengajuanIuranController extends Controller
             ->where('is_active', true)
             ->count();
 
-        $kkBelumBayar = $totalHouseholdsAktif - $jumlahKK;
+        $sudahBayarPeriode = PengajuanIuranDetail::whereHas('pengajuanIuran', function ($q) use ($request, $user) {
+            $q->where('block_id', $user->block_id)
+                ->where('bulan', $request->bulan)
+                ->where('tahun', $request->tahun)
+                ->whereIn('status', ['Menunggu Verifikasi', 'Disetujui']);
+        })
+            ->distinct('household_id')
+            ->count('household_id');
+
+        $kkBelumBayar = $totalHouseholdsAktif - $sudahBayarPeriode - $jumlahKK;
 
         DB::transaction(function () use (
             $request,

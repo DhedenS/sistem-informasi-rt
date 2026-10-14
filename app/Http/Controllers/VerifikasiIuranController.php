@@ -40,11 +40,22 @@ class VerifikasiIuranController extends Controller
             ->where('is_active', true)
             ->count();
 
+        // KK yang sudah masuk di pengajuan LAIN pada periode yang sama
+        $sudahLunasLain = PengajuanIuranDetail::whereHas('pengajuanIuran', function ($q) use ($pengajuanIuran) {
+            $q->where('block_id', $pengajuanIuran->block_id)
+                ->where('bulan', $pengajuanIuran->bulan)
+                ->where('tahun', $pengajuanIuran->tahun)
+                ->where('id', '!=', $pengajuanIuran->id)
+                ->whereIn('status', ['Menunggu Verifikasi', 'Disetujui']);
+        })
+            ->distinct('household_id')
+            ->count('household_id');
+
         $jumlahKKDiajukan = $pengajuanIuran->details->count();
-        $kkBelumBayar = $totalHouseholdsAktif - $jumlahKKDiajukan;
+        $kkBelumBayar = max($totalHouseholdsAktif - $sudahLunasLain - $jumlahKKDiajukan, 0);
 
         return view('verifikasi-iuran.show', compact(
-            'pengajuanIuran', 'totalHouseholdsAktif', 'kkBelumBayar'
+            'pengajuanIuran', 'totalHouseholdsAktif', 'kkBelumBayar', 'sudahLunasLain'
         ));
     }
 
@@ -252,7 +263,7 @@ class VerifikasiIuranController extends Controller
         $blocks = Block::where('is_active', true)->orderBy('name')->get();
 
         $householdsQuery = Household::with('block')->where('is_active', true);
-        if (!empty($selectedBlockId)) {
+        if (! empty($selectedBlockId)) {
             $householdsQuery->where('block_id', $selectedBlockId);
         }
         $households = $householdsQuery->orderBy('block_id')->orderBy('household_number')->get();
@@ -264,8 +275,8 @@ class VerifikasiIuranController extends Controller
 
         $pendingDetailIds = PengajuanIuranDetail::whereHas('pengajuanIuran', function ($q) use ($month, $year) {
             $q->where('bulan', $month)
-              ->where('tahun', $year)
-              ->where('status', 'Menunggu Verifikasi');
+                ->where('tahun', $year)
+                ->where('status', 'Menunggu Verifikasi');
         })->pluck('household_id')->toArray();
 
         $rekapList = [];
@@ -303,7 +314,7 @@ class VerifikasiIuranController extends Controller
             $totalKK++;
 
             // Filter by status
-            if (!empty($selectedStatus)) {
+            if (! empty($selectedStatus)) {
                 if ($selectedStatus === 'Lunas' && $status !== 'Sudah Bayar') {
                     continue;
                 }
@@ -355,7 +366,7 @@ class VerifikasiIuranController extends Controller
         if ($request->filled('block_id')) {
             $block = Block::find($request->block_id);
             if ($block) {
-                $blockName = 'Blok_' . str_replace(' ', '_', $block->name);
+                $blockName = 'Blok_'.str_replace(' ', '_', $block->name);
             }
         }
 
