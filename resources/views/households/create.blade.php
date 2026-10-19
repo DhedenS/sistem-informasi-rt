@@ -32,6 +32,13 @@
                     </div>
 
                     <div class="mb-4">
+                        <label class="block mb-1">Email Akun Warga</label>
+                        <input type="email" name="email" value="{{ old('email') }}" required class="w-full border rounded p-2" placeholder="contoh@email.com">
+                        <p class="text-gray-500 text-xs mt-1">Akun warga otomatis dibuat dengan password awal <b>password</b>.</p>
+                        @error('email') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="mb-4">
                         <label class="block mb-1">Alamat</label>
                         <textarea name="address" class="w-full border rounded p-2">{{ old('address') }}</textarea>
                     </div>

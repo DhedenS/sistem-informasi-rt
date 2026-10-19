@@ -68,11 +68,6 @@
                         <a href="{{ route('login') }}" class="px-4 py-2 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-200 hover:text-white font-medium text-sm transition-all bg-slate-800/50 hover:bg-slate-800">
                             Masuk
                         </a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm shadow-md shadow-blue-600/20 transition-all">
-                                Daftar Warga
-                            </a>
-                        @endif
                     @endauth
                 @endif
             </div>

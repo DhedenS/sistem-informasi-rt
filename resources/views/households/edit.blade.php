@@ -42,6 +42,24 @@
                     </div>
 
                     <div class="mb-4">
+                        <label class="block mb-1">Role Akun</label>
+                        @if (! $user)
+                            <p class="text-sm text-gray-500">KK ini belum memiliki akun, jadi role belum bisa diatur.</p>
+                        @elseif ($roleLocked)
+                            <input type="text" value="{{ $currentRole }}" disabled class="w-full border rounded p-2 bg-gray-100 text-gray-500">
+                            <p class="text-gray-500 text-xs mt-1">Role {{ $currentRole }} tidak dapat diubah dari sini.{{ $currentRole === 'Ketua Block' ? ' Atur lewat menu Blok.' : '' }}</p>
+                        @else
+                            <select name="role" class="w-full border rounded p-2">
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role }}" {{ old('role', $currentRole) === $role ? 'selected' : '' }}>{{ $role }}</option>
+                                @endforeach
+                            </select>
+                            <p class="text-gray-500 text-xs mt-1">Akun: {{ $user->email }}.</p>
+                        @endif
+                        @error('role') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="mb-4">
                         <label>
                             <input type="checkbox" name="is_active" value="1" {{ $household->is_active ? 'checked' : '' }}> Aktif
                         </label>
