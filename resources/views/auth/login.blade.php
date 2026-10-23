@@ -603,45 +603,4 @@
     </form>
 
 
-
-    {{-- ========================================================= --}}
-    {{-- REGISTER --}}
-    {{-- ========================================================= --}}
-    @if (Route::has('register'))
-
-        <div
-            class="
-                mt-6
-                border-t
-                border-slate-200
-                pt-5
-                text-center
-            "
-        >
-
-            <p class="text-sm text-slate-500">
-
-                Belum memiliki akun?
-
-                <a
-                    href="{{ route('register') }}"
-
-                    class="
-                        font-semibold
-                        text-blue-600
-
-                        transition
-
-                        hover:text-blue-700
-                    "
-                >
-                    Daftar di sini
-                </a>
-
-            </p>
-
-        </div>
-
-    @endif
-
 </x-guest-layout>

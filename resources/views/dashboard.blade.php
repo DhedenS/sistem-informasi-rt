@@ -16,39 +16,18 @@
 
     {{-- ========================================================= --}}
     {{-- STATISTIK --}}
-    {{-- Mobile  : 2 kolom --}}
-    {{-- Desktop : 4 kolom --}}
+    {{-- Mobile  : 2 kolom (Saldo Kas lebar penuh di bawah) --}}
+    {{-- Desktop : 3 kolom --}}
     {{-- ========================================================= --}}
-    <div
-        class="
-            dashboard-stat-grid
-            mb-5
-            grid
-            gap-2.5
-            sm:gap-4
-            xl:gap-5
-        ">
+    <div class="dashboard-stat-grid mb-5 grid gap-2.5 sm:gap-4 xl:gap-5">
 
         {{-- TOTAL KK --}}
         <div
-            class="
-                min-w-0
-                rounded-xl
-                border border-gray-200
-                bg-white
-                p-3
-                shadow-sm
-                transition
-                sm:rounded-2xl
-                sm:p-4
-                lg:p-5
-            ">
+            class="min-w-0 rounded-xl border border-gray-200 bg-white p-3 shadow-sm transition sm:rounded-2xl sm:p-4 lg:p-5">
             <div class="flex h-full items-center justify-between gap-2 sm:gap-4">
 
                 <div class="min-w-0">
-                    <p class="truncate text-[11px] font-medium text-gray-500 sm:text-sm">
-                        Total KK
-                    </p>
+                    <p class="truncate text-[11px] font-medium text-gray-500 sm:text-sm">Total KK</p>
 
                     <p class="mt-0.5 text-xl font-bold text-gray-900 sm:mt-1 sm:text-2xl lg:text-3xl">
                         {{ $totalKK }}
@@ -60,24 +39,7 @@
                 </div>
 
                 <div
-                    class="
-                        flex
-                        h-9
-                        w-9
-                        shrink-0
-                        items-center
-                        justify-center
-                        rounded-lg
-                        bg-blue-100
-                        text-lg
-                        sm:h-11
-                        sm:w-11
-                        sm:rounded-xl
-                        sm:text-xl
-                        lg:h-12
-                        lg:w-12
-                        lg:text-2xl
-                    ">
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-lg sm:h-11 sm:w-11 sm:rounded-xl sm:text-xl lg:h-12 lg:w-12 lg:text-2xl">
                     👨‍👩‍👧‍👦
                 </div>
 
@@ -85,145 +47,12 @@
         </div>
 
 
-        {{-- SURAT MASUK --}}
-        <div
-            class="
-                min-w-0
-                rounded-xl
-                border border-gray-200
-                bg-white
-                p-3
-                shadow-sm
-                sm:rounded-2xl
-                sm:p-4
-                lg:p-5
-            ">
-            <div class="flex h-full items-center justify-between gap-2 sm:gap-4">
-
-                <div class="min-w-0">
-                    <p class="truncate text-[11px] font-medium text-gray-500 sm:text-sm">
-                        Surat Masuk
-                    </p>
-
-                    <p class="mt-0.5 text-xl font-bold text-gray-900 sm:mt-1 sm:text-2xl lg:text-3xl">
-                        {{ $totalSuratMasuk }}
-                    </p>
-
-                    <p class="mt-1 truncate text-[10px] font-medium text-blue-600 sm:mt-2 sm:text-xs">
-                        Surat diterima
-                    </p>
-                </div>
-
-                <div
-                    class="
-                        flex
-                        h-9
-                        w-9
-                        shrink-0
-                        items-center
-                        justify-center
-                        rounded-lg
-                        bg-purple-100
-                        text-lg
-                        sm:h-11
-                        sm:w-11
-                        sm:rounded-xl
-                        sm:text-xl
-                        lg:h-12
-                        lg:w-12
-                        lg:text-2xl
-                    ">
-                    📄
-                </div>
-
-            </div>
-        </div>
-
-
-        {{-- SALDO KAS --}}
-        <div
-            class="
-                min-w-0
-                rounded-xl
-                border border-gray-200
-                bg-white
-                p-3
-                shadow-sm
-                sm:rounded-2xl
-                sm:p-4
-                lg:p-5
-            ">
-            <div class="flex h-full items-center justify-between gap-2 sm:gap-4">
-
-                <div class="min-w-0">
-                    <p class="truncate text-[11px] font-medium text-gray-500 sm:text-sm">
-                        Saldo Kas
-                    </p>
-
-                    <p class="
-                            mt-0.5
-                            truncate
-                            text-base
-                            font-bold
-                            text-gray-900
-                            sm:mt-1
-                            sm:text-xl
-                            lg:text-2xl
-                        "
-                        title="Rp {{ number_format($saldoKas, 0, ',', '.') }}">
-                        Rp {{ number_format($saldoKas, 0, ',', '.') }}
-                    </p>
-
-                    <p class="mt-1 truncate text-[10px] font-medium text-green-600 sm:mt-2 sm:text-xs">
-                        Saldo saat ini
-                    </p>
-                </div>
-
-                <div
-                    class="
-                        flex
-                        h-9
-                        w-9
-                        shrink-0
-                        items-center
-                        justify-center
-                        rounded-lg
-                        bg-green-100
-                        text-lg
-                        sm:h-11
-                        sm:w-11
-                        sm:rounded-xl
-                        sm:text-xl
-                        lg:h-12
-                        lg:w-12
-                        lg:text-2xl
-                    ">
-                    💰
-                </div>
-
-            </div>
-        </div>
-
-
         {{-- TOTAL BLOK --}}
-        <div
-            class="
-                min-w-0
-                rounded-xl
-                border border-gray-200
-                bg-white
-                p-3
-                shadow-sm
-                sm:rounded-2xl
-                sm:p-4
-                lg:p-5
-            ">
+        <div class="min-w-0 rounded-xl border border-gray-200 bg-white p-3 shadow-sm sm:rounded-2xl sm:p-4 lg:p-5">
             <div class="flex h-full items-center justify-between gap-2 sm:gap-4">
 
                 <div class="min-w-0">
-                    <p class="truncate text-[11px] font-medium text-gray-500 sm:text-sm">
-                        Total Blok
-                    </p>
+                    <p class="truncate text-[11px] font-medium text-gray-500 sm:text-sm">Total Blok</p>
 
                     <p class="mt-0.5 text-xl font-bold text-gray-900 sm:mt-1 sm:text-2xl lg:text-3xl">
                         {{ $totalBlok }}
@@ -235,25 +64,35 @@
                 </div>
 
                 <div
-                    class="
-                        flex
-                        h-9
-                        w-9
-                        shrink-0
-                        items-center
-                        justify-center
-                        rounded-lg
-                        bg-orange-100
-                        text-lg
-                        sm:h-11
-                        sm:w-11
-                        sm:rounded-xl
-                        sm:text-xl
-                        lg:h-12
-                        lg:w-12
-                        lg:text-2xl
-                    ">
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-lg sm:h-11 sm:w-11 sm:rounded-xl sm:text-xl lg:h-12 lg:w-12 lg:text-2xl">
                     🏘️
+                </div>
+
+            </div>
+        </div>
+
+
+        {{-- SALDO KAS (lebar = 2 kartu di atasnya pada mobile/tablet) --}}
+        <div
+            class="stat-wide min-w-0 rounded-xl border border-gray-200 bg-white p-3 shadow-sm sm:rounded-2xl sm:p-4 lg:p-5">
+            <div class="flex h-full items-center justify-between gap-2 sm:gap-4">
+
+                <div class="min-w-0">
+                    <p class="truncate text-[11px] font-medium text-gray-500 sm:text-sm">Saldo Kas</p>
+
+                    <p class="mt-0.5 truncate text-base font-bold text-gray-900 sm:mt-1 sm:text-xl lg:text-2xl"
+                        title="Rp {{ number_format($saldoKas, 0, ',', '.') }}">
+                        Rp {{ number_format($saldoKas, 0, ',', '.') }}
+                    </p>
+
+                    <p class="mt-1 truncate text-[10px] font-medium text-green-600 sm:mt-2 sm:text-xs">
+                        Saldo saat ini
+                    </p>
+                </div>
+
+                <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-green-100 text-lg sm:h-11 sm:w-11 sm:rounded-xl sm:text-xl lg:h-12 lg:w-12 lg:text-2xl">
+                    💰
                 </div>
 
             </div>
@@ -679,130 +518,107 @@
     {{-- CSS KHUSUS DASHBOARD --}}
     {{-- ========================================================= --}}
     <style>
-        /*
-        |--------------------------------------------------------------------------
-        | STATISTIC GRID
-        |--------------------------------------------------------------------------
-        */
         [x-cloak] {
             display: none !important;
         }
 
+
+        /*
+    |--------------------------------------------------------------------------
+    | STATISTIC GRID
+    | Mobile/Tablet : 2 kolom (Total Blok lebar penuh di bawah)
+    | Desktop       : 3 kolom
+    |--------------------------------------------------------------------------
+    */
         .dashboard-stat-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
+        .dashboard-stat-grid .stat-wide {
+            grid-column: span 2 / span 2;
+        }
+
 
         /*
-        |--------------------------------------------------------------------------
-        | CASHFLOW CHART
-        |--------------------------------------------------------------------------
-        */
-
+    |--------------------------------------------------------------------------
+    | CASHFLOW CHART
+    |--------------------------------------------------------------------------
+    */
         .cashflow-chart {
             width: 100%;
             min-width: 0;
-
             height: 180px;
-
             display: grid;
             grid-template-columns: repeat(6, minmax(0, 1fr));
-
             align-items: end;
-
             gap: 5px;
-
             padding: 8px 2px 0;
-
             border-bottom: 1px solid #e5e7eb;
-
             overflow: hidden;
         }
-
 
         .cashflow-item {
             height: 100%;
             min-width: 0;
-
             display: flex;
             flex-direction: column;
-
             align-items: center;
             justify-content: flex-end;
         }
 
-
         .cashflow-bar-area {
             width: 100%;
             min-width: 0;
-
             height: calc(100% - 25px);
-
             display: flex;
-
             align-items: flex-end;
             justify-content: center;
-
             gap: 2px;
         }
-
 
         .cashflow-bar {
             width: 32%;
             max-width: 18px;
             min-width: 4px;
-
             border-radius: 4px 4px 0 0;
-
-            transition:
-                height 0.25s ease,
-                opacity 0.2s ease;
-
+            transition: height 0.25s ease, opacity 0.2s ease;
             cursor: pointer;
         }
-
 
         .cashflow-bar:hover {
             opacity: 0.8;
         }
 
-
         .cashflow-label {
             display: block;
-
             width: 100%;
-
             margin-top: 7px;
-
             overflow: hidden;
-
             text-align: center;
-
             font-size: 9px;
             line-height: 1;
-
             color: #6b7280;
-
             white-space: nowrap;
             text-overflow: ellipsis;
         }
 
 
         /*
-        |--------------------------------------------------------------------------
-        | HP SANGAT KECIL
-        |--------------------------------------------------------------------------
-        */
-
+    |--------------------------------------------------------------------------
+    | HP SANGAT KECIL (< 360px)
+    |--------------------------------------------------------------------------
+    */
         @media (max-width: 359px) {
-
             .dashboard-stat-grid {
                 grid-template-columns: minmax(0, 1fr);
             }
 
+            .dashboard-stat-grid .stat-wide {
+                grid-column: span 1 / span 1;
+            }
+
             .cashflow-chart {
                 height: 165px;
-
                 gap: 3px;
             }
 
@@ -814,48 +630,31 @@
             .cashflow-label {
                 font-size: 8px;
             }
-
         }
 
 
         /*
-        |--------------------------------------------------------------------------
-        | MOBILE NORMAL
-        |--------------------------------------------------------------------------
-        */
-
+    |--------------------------------------------------------------------------
+    | MOBILE NORMAL (360px - 639px)
+    |--------------------------------------------------------------------------
+    */
         @media (min-width: 360px) and (max-width: 639px) {
-
-            .dashboard-stat-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
             .cashflow-chart {
                 height: 175px;
-
                 gap: 4px;
             }
-
         }
 
 
         /*
-        |--------------------------------------------------------------------------
-        | TABLET
-        |--------------------------------------------------------------------------
-        */
-
+    |--------------------------------------------------------------------------
+    | TABLET (>= 640px)
+    |--------------------------------------------------------------------------
+    */
         @media (min-width: 640px) {
-
-            .dashboard-stat-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
             .cashflow-chart {
                 height: 230px;
-
                 gap: 8px;
-
                 padding-left: 8px;
                 padding-right: 8px;
             }
@@ -871,30 +670,28 @@
 
             .cashflow-label {
                 margin-top: 9px;
-
                 font-size: 12px;
             }
-
         }
 
 
         /*
-        |--------------------------------------------------------------------------
-        | DESKTOP
-        |--------------------------------------------------------------------------
-        */
-
+    |--------------------------------------------------------------------------
+    | DESKTOP (>= 1280px)
+    |--------------------------------------------------------------------------
+    */
         @media (min-width: 1280px) {
-
             .dashboard-stat-grid {
-                grid-template-columns: repeat(4, minmax(0, 1fr));
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .dashboard-stat-grid .stat-wide {
+                grid-column: span 1 / span 1;
             }
 
             .cashflow-chart {
                 height: 260px;
-
                 gap: 12px;
-
                 padding-left: 12px;
                 padding-right: 12px;
             }
@@ -902,7 +699,6 @@
             .cashflow-bar {
                 max-width: 28px;
             }
-
         }
     </style>
 
